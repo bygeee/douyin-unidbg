@@ -1,0 +1,117 @@
+X-Perseus: eaeeeGJl77Aku0ZbzFIJf9M/Cb85wc/vcGBxZiJG/Kocu22Iv60LxvUA6r9U7Z75fXQ7JR2PvlNRoYupBFq+5v5ggdpnSXY1oi+uv3vHxvCxDABcnWH+SA4PwjjLFdvuOCsJ8yHREdUJv7b7COPFbEXo0LEkFJ1xFuVb4J/Md35wrDzWlXJGetHdmThy5WmeZttBFUm641ZklPaOHKz5DOPFC1p4r9A5iPZgkhISiB3Cmgv6GXf3h7sGk7FgdJPzgF72AZ1zDCw22cDRkMqR63CwnJjkutEuSa0jxVk+pjtuPTCXRsPY6Y/CznBbLqa3Ppaa7ClpSWWnsVg0bKZ6XAVKAi5Kt7rGEY32yvF9UDXl/7txcbbNcUnCnutKkoImd9qfbJ0KdVDAjD5s1Eq+H98e97xnCX6jMtSBcixzFpgn0B/pY6zeEJCHiE1ozPjgrjKtso9bMLTXvCn7aJUVFsdb8R55BxQS7KDewilwyI/WlO1KN7VfoCxmjrjqO2y48AJe3H3s5X2qb8VUzLfvgvrC0dG1IU7zTea9wWSFQY6XfIFjM59It3/hq4TZQ7jXOWK1q1W4PhQBssSZVjWQUZx6GKOpOmFFRLMgYEdigUIjk+VnNHLVxa8CAOw6Ry5hZhCzcnBbsnXJ6NOsc/x2QjzyhUCJGDU1KbJyxM+sQi5H5kgYaRLaQvA7U5HTipOkR1+Eyf4FE1NMZspb/Xz/8tOosmHA1HQwxtDUSr3FxlkHZAe9AZuGEdWXopTLaJowEspNCsdm0V5tVKuTQBqFbQZp+NJhTqmtGxzPOdu4LKNcstIF5nQK9jicun6sP3avEzt3jcvmB3cl+KQ4sHjCt2B0VkGu+s==
+X-Medusa: gPn+aexj1UPFYlH4BjP8A0XPWpejLgANPwoaV96AGyMn848M5rW/1QBEAKQemI26vP4LBnuma6Id7FQWyUM+pI01OGsA3AnjUIJThETFH2Y1dAzkgoPUSbqFXYE8HiDFrS/7MQniUg6+/QCoEOZiZSyNgFnBtR3/acPVgpb4uorq0RDeohShg5ASE/kzsvrOwJZ+N0xDtF/ZClx9PGp9avZTFeE5fVSpvfCxqaEcQfIYC3sOFLRg6a0yfUNxFP4rq5UFAZcMYQY2oTucdjHoFDqn6X3VNq7l7SyVngF5RIRq2bMKcuuTfAaQI+LOLrUabvBnjJeLxc1sokRtYNpeeKkSZuQKVjlcX3T/+V90//nUWQ==
+X-Argus: h/n+aQ==
+X-Gorgon: 8404e0110000356ed2027c371bf394b8f9c9c999cb1d462da0a7
+X-Helios: 6trBejr/mfx5ewR3Jnlp33gxeW6hAXL4DD1nEgcAofxf52Ew
+X-Ladon: 3N9T8A==
+X-Khronos: 1778317703
+
+[metasec+0x2b7724] lr=RX@0x12a7e2c0[libmetasec_ml.so]0x2be2c0 mapCtx=unidbg@0xe4ffe128
+  key   => ref=unidbg@0xe4ff7aa8 alloc=9 len=8 data=RW@0x12358600 text=X-Gorgon
+  value => ref=unidbg@0xe4ff7ae8 alloc=53 len=52 data=RW@0x13104b00 text=840480d200005467e497e9cebb6f7084ee18d9467c67f044280f
+  X-Gorgon native callstack:
+   0x12d6dc18 libhookzz.so+0xdc18
+    0x12d6dcbc libhookzz.so+0xdcbc
+    0x1216d08c
+    0x12c17694 libmetasec_ml.so+0x457694
+    0x12a9d278 libmetasec_ml.so+0x2dd278
+    0x12a8cf60 libmetasec_ml.so+0x2ccf60
+    0x12a8b7b4 libmetasec_ml.so+0x2cb7b4
+    0x12a7ef10 libmetasec_ml.so+0x2bef10
+    0x12a78138 libmetasec_ml.so+0x2b8138
+    0x12c17694 libmetasec_ml.so+0x457694
+    0x12a98224 libmetasec_ml.so+0x2d8224
+    0x12a8cf60 libmetasec_ml.so+0x2ccf60
+    0x12c17694 libmetasec_ml.so+0x457694
+    0x12ac3710 libmetasec_ml.so+0x303710
+    0x12a9c670 libmetasec_ml.so+0x2dc670
+    0x12a8cf60 libmetasec_ml.so+0x2ccf60
+    0x12a8b7b4 libmetasec_ml.so+0x2cb7b4
+    0x12a79dd4 libmetasec_ml.so+0x2b9dd4
+    0x12a88ad0 libmetasec_ml.so+0x2c8ad0
+    0x12a880c8 libmetasec_ml.so+0x2c80c8
+
+
+br
+0x2dba74
+    size: 48
+    0000: 01 1B 88 04 00 00 00 00 00 00 00 00 00 00 00 00    ................
+    0010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+    0020: 00 00 00 00 00 00 00 00 B1 00 00 00 00 00 00 00
+    uint64_t field_0 = x0->field_0
+    int64_t x12_3 = *(field_0 + 2)
+    int64_t* x8_4 = arg2->slots[*field_0] 0xe4ff76b0
+    int64_t x9_7 = arg2->slots[*(field_0 + 1)] 0
+    *(x8_4 + x12_3) = x9_7  0xe4ff76b0+ 0x490 =0
+
+
+0x2d1ee0
+    int64_t x13_1 = x0->field_0:2.w
+    int64_t* x10_4 = arg2->slots[x0->field_0.b]
+    int64_t x9_4 = arg2->slots[x0->field_0:1.b]
+    *(x10_4 + x13_1) = x9_4 0x1315e0f0+0x488 =0
+
+0x2d1ee0
+    int64_t x13_1 = x0->field_0:2.w
+    int64_t* x10_4 = arg2->slots[x0->field_0.b]
+    int64_t x9_4 = arg2->slots[x0->field_0:1.b]
+    *(x10_4 + x13_1) = x9_4 0xe4ff76b0+0x480 =0
+
+0x2d1ee0
+    int64_t x13_1 = x0->field_0:2.w
+    int64_t* x10_4 = arg2->slots[x0->field_0.b]
+    int64_t x9_4 = arg2->slots[x0->field_0:1.b]
+    *(x10_4 + x13_1) = x9_4 0xe4ff76b0+0x478 =0
+
+0x2d1ee0
+    int64_t x13_1 = x0->field_0:2.w
+    int64_t* x10_4 = arg2->slots[x0->field_0.b]
+    int64_t x9_4 = arg2->slots[x0->field_0:1.b]
+    *(x10_4 + x13_1) = x9_4 0xe4ff76b0+0x478 =0
+
+0x2d1ee0
+    int64_t x13_1 = x0->field_0:2.w
+    int64_t* x10_4 = arg2->slots[x0->field_0.b]
+    int64_t x9_4 = arg2->slots[x0->field_0:1.b]
+    *(x10_4 + x13_1) = x9_4 0xe4ff76b0+0x470 =0
+
+0x2d1ee0
+    int64_t x13_1 = x0->field_0:2.w
+    int64_t* x10_4 = arg2->slots[x0->field_0.b]
+    int64_t x9_4 = arg2->slots[x0->field_0:1.b]
+    *(x10_4 + x13_1) = x9_4 0xe4ff76b0+0x468 =0
+
+0x2d1ee0
+    int64_t x13_1 = x0->field_0:2.w
+    int64_t* x10_4 = arg2->slots[x0->field_0.b]
+    int64_t x9_4 = arg2->slots[x0->field_0:1.b]
+    *(x10_4 + x13_1) = x9_4 0xe4ff76b0+0x460 =0
+
+0x2d926c
+    sub_301754
+        0x3018ac
+            *(*x5 + *(x9 + 2)) = *x6 0xe4ff76b0+0x458 =0
+        0x3017fc
+            *(x1_1 + x8) = x12 0xe4ff76b0+0x450 =0
+
+0x2d00e4
+    纯跳
+
+0x2cfaf0
+    int64_t x10_1 = *(*(arg4 + (*arg1 << 3)) + *(arg1 + 2)) x10=0 0xe4ffdcd0+0x508
+
+0x2cf90c
+    [libmetasec_ml.so *0x2cf938]*[e80200b9]*0x12a8f938:*"str w8, [x23]" [0xe4ff1b2c] => 0x11
+
+0x2d1b78
+    int64_t* x10 = *(arg1 + 8)
+    *arg3 = x8
+
+
+
+
+
+
+
+
+

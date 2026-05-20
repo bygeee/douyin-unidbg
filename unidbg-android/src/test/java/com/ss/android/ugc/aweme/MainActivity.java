@@ -56,7 +56,6 @@ public class MainActivity {
         mainActivity.testDirectMetasecCallback();
     }
 
-
     private final AndroidEmulator emulator;
     private final Module metasecModule;
     private final List<MemoryBlock> manualBlocks = new ArrayList<>();
