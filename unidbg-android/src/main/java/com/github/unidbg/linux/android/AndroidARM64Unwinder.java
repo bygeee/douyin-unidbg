@@ -12,12 +12,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 class AndroidARM64Unwinder extends SimpleARM64Unwinder {
 
     private static final Logger log = LoggerFactory.getLogger(AndroidARM64Unwinder.class);
 
     private final DwarfCursor context;
+    private final Set<Long> badEhFrameModules = new HashSet<>();
 
     public AndroidARM64Unwinder(Emulator<?> emulator) {
         super(emulator);
@@ -26,8 +29,12 @@ class AndroidARM64Unwinder extends SimpleARM64Unwinder {
 
     @Override
     protected Frame unw_step(Emulator<?> emulator, Frame frame) {
+        LinuxModule module = null;
         try {
-            LinuxModule module = (LinuxModule) emulator.getMemory().findModuleByAddress(this.context.ip);
+            module = (LinuxModule) emulator.getMemory().findModuleByAddress(this.context.ip);
+            if (module != null && badEhFrameModules.contains(module.base)) {
+                return super.unw_step(emulator, frame);
+            }
             MemoizedObject<GnuEhFrameHeader> ehFrameHeader = module == null ? null : module.ehFrameHeader;
             if (ehFrameHeader != null) {
                 long fun = this.context.ip - module.base;
@@ -38,7 +45,13 @@ class AndroidARM64Unwinder extends SimpleARM64Unwinder {
                 }
             }
         } catch (RuntimeException exception) {
-            log.warn("unw_step", exception);
+            if (module != null) {
+                badEhFrameModules.add(module.base);
+            }
+            String message = exception.getMessage();
+            if (message == null || !message.startsWith("version is: 0")) {
+                log.warn("unw_step", exception);
+            }
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
