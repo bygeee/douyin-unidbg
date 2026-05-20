@@ -2,6 +2,7 @@ package com.github.unidbg.arm;
 
 import capstone.api.Instruction;
 import capstone.api.OpShift;
+import capstone.api.RegsAccess;
 import capstone.api.arm.MemType;
 import capstone.api.arm.Operand;
 import com.github.unidbg.Alignment;
@@ -26,8 +27,10 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * arm utils
@@ -918,6 +921,109 @@ public class ARM {
 
     static String assembleDetail(Emulator<?> emulator, Instruction ins, long address, boolean thumb, int maxLengthLibraryName) {
         return assembleDetail(emulator, ins, address, thumb, false, maxLengthLibraryName);
+    }
+
+    public static String formatUsedRegisters(Emulator<?> emulator, Instruction ins) {
+        RegsAccess regsAccess = ins.regsAccess();
+        if (regsAccess == null) {
+            return null;
+        }
+
+        Set<Short> regs = new LinkedHashSet<>();
+        addRegs(regs, regsAccess.getRegsRead());
+        addRegs(regs, regsAccess.getRegsWrite());
+        if (regs.isEmpty()) {
+            return null;
+        }
+
+        Backend backend = emulator.getBackend();
+        StringBuilder sb = new StringBuilder();
+        for (short reg : regs) {
+            String value = formatRegisterValue(emulator, backend, ins, reg);
+            if (value == null) {
+                continue;
+            }
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append(value);
+        }
+        return sb.length() == 0 ? null : sb.toString();
+    }
+
+    private static void addRegs(Set<Short> out, short[] regs) {
+        if (regs == null || regs.length == 0) {
+            return;
+        }
+        for (short reg : regs) {
+            out.add(reg);
+        }
+    }
+
+    private static String formatRegisterValue(Emulator<?> emulator, Backend backend, Instruction ins, short reg) {
+        int regId = ins.mapToUnicornReg(reg);
+        String regName = ins.regName(reg);
+        try {
+            if (emulator.is32Bit()) {
+                if (regId == ArmConst.UC_ARM_REG_CPSR) {
+                    Cpsr cpsr = Cpsr.getArm(backend);
+                    return String.format(Locale.US, "cpsr:N=%d,Z=%d,C=%d,V=%d",
+                            cpsr.isNegative() ? 1 : 0,
+                            cpsr.isZero() ? 1 : 0,
+                            cpsr.hasCarry() ? 1 : 0,
+                            cpsr.isOverflow() ? 1 : 0);
+                }
+                if (regId == ArmConst.UC_ARM_REG_PC) {
+                    long value = backend.reg_read(regId).intValue() & 0xffffffffL;
+                    return regName + "=0x" + Long.toHexString(value);
+                }
+                if (regId == ArmConst.UC_ARM_REG_LR || regId == ArmConst.UC_ARM_REG_SP ||
+                        (regId >= ArmConst.UC_ARM_REG_R0 && regId <= ArmConst.UC_ARM_REG_R12)) {
+                    long value = backend.reg_read(regId).intValue() & 0xffffffffL;
+                    return regName + "=0x" + Long.toHexString(value);
+                }
+                if (regId == ArmConst.UC_ARM_REG_D0 || (regId >= ArmConst.UC_ARM_REG_D0 && regId <= ArmConst.UC_ARM_REG_D15)) {
+                    byte[] data = backend.reg_read_vector(regId);
+                    return regName + "=0x" + newBigInteger(data).toString(16);
+                }
+            } else {
+                if (regId == Arm64Const.UC_ARM64_REG_NZCV) {
+                    Cpsr cpsr = Cpsr.getArm64(backend);
+                    return String.format(Locale.US, "nzcv:N=%d,Z=%d,C=%d,V=%d",
+                            cpsr.isNegative() ? 1 : 0,
+                            cpsr.isZero() ? 1 : 0,
+                            cpsr.hasCarry() ? 1 : 0,
+                            cpsr.isOverflow() ? 1 : 0);
+                }
+                if (regId == Arm64Const.UC_ARM64_REG_XZR || regId == Arm64Const.UC_ARM64_REG_WZR) {
+                    return regName + "=0x0";
+                }
+                if (regId == Arm64Const.UC_ARM64_REG_WSP) {
+                    long value = backend.reg_read(Arm64Const.UC_ARM64_REG_SP).intValue() & 0xffffffffL;
+                    return regName + "=0x" + Long.toHexString(value);
+                }
+                if (regId == Arm64Const.UC_ARM64_REG_PC) {
+                    long value = backend.reg_read(regId).longValue();
+                    return regName + "=0x" + Long.toHexString(value);
+                }
+                if ((regId >= Arm64Const.UC_ARM64_REG_X0 && regId <= Arm64Const.UC_ARM64_REG_X28) ||
+                        (regId >= Arm64Const.UC_ARM64_REG_X29 && regId <= Arm64Const.UC_ARM64_REG_SP)) {
+                    long value = backend.reg_read(regId).longValue();
+                    return regName + "=0x" + Long.toHexString(value);
+                }
+                if (regId >= Arm64Const.UC_ARM64_REG_W0 && regId <= Arm64Const.UC_ARM64_REG_W30) {
+                    long value = backend.reg_read(regId).intValue() & 0xffffffffL;
+                    return regName + "=0x" + Long.toHexString(value);
+                }
+                if (regId >= Arm64Const.UC_ARM64_REG_Q0 && regId <= Arm64Const.UC_ARM64_REG_Q31) {
+                    byte[] data = backend.reg_read_vector(regId);
+                    return regName + "=0x" + newBigInteger(data).toString(16);
+                }
+            }
+        } catch (Exception ignored) {
+            return regName + "=<unreadable>";
+        }
+        return null;
     }
 
     private static void appendMemoryDetails32(Emulator<?> emulator, Instruction ins, capstone.api.arm.OpInfo opInfo, boolean thumb, StringBuilder sb) {

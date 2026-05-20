@@ -1,0 +1,170 @@
+X-Perseus: eaeeeGJl77Aku0ZbzFIJf9M/Cb85wc/vcGBxZiJG/Kocu22Iv60LxvUA6r9U7Z75fXQ7JR2PvlNRoYupBFq+5v5ggdpnSXY1oi+uv3vHxvCxDABcnWH+SA4PwjjLFdvuOCsJ8yHREdUJv7b7COPFbEXo0LEkFJ1xFuVb4J/Md35wrDzWlXJGetHdmThy5WmeZttBFUm641ZklPaOHKz5DOPFC1p4r9A5iPZgkhISiB3Cmgv6GXf3h7sGk7FgdJPzgF72AZ1zDCw22cDRkMqR63CwnJjkutEuSa0jxVk+pjtuPTCXRsPY6Y/CznBbLqa3Ppaa7ClpSWWnsVg0bKZ6XAVKAi5Kt7rGEY32yvF9UDXl/7txcbbNcUnCnutKkoImd9qfbJ0KdVDAjD5s1Eq+H98e97xnCX6jMtSBcixzFpgn0B/pY6zeEJCHiE1ozPjgrjKtso9bMLTXvCn7aJUVFsdb8R55BxQS7KDewilwyI/WlO1KN7VfoCxmjrjqO2y48AJe3H3s5X2qb8VUzLfvgvrC0dG1IU7zTea9wWSFQY6XfIFjM59It3/hq4TZQ7jXOWK1q1W4PhQBssSZVjWQUZx6GKOpOmFFRLMgYEdigUIjk+VnNHLVxa8CAOw6Ry5hZhCzcnBbsnXJ6NOsc/x2QjzyhUCJGDU1KbJyxM+sQi5H5kgYaRLaQvA7U5HTipOkR1+Eyf4FE1NMZspb/Xz/8tOosmHA1HQwxtDUSr3FxlkHZAe9AZuGEdWXopTLaJowEspNCsdm0V5tVKuTQBqFbQZp+NJhTqmtGxzPOdu4LKNcstIF5nQK9jicun6sP3avEzt3jcvmB3cl+KQ4sHjCt2B0VkGu+s==
+X-Medusa: gPn+aexj1UPFYlH4BjP8A0XPWpejLgANPwoaV96AGyMn848M5rW/1QBEAKQemI26vP4LBnuma6Id7FQWyUM+pI01OGsA3AnjUIJThETFH2Y1dAzkgoPUSbqFXYE8HiDFrS/7MQniUg6+/QCoEOZiZSyNgFnBtR3/acPVgpb4uorq0RDeohShg5ASE/kzsvrOwJZ+N0xDtF/ZClx9PGp9avZTFeE5fVSpvfCxqaEcQfIYC3sOFLRg6a0yfUNxFP4rq5UFAZcMYQY2oTucdjHoFDqn6X3VNq7l7SyVngF5RIRq2bMKcuuTfAaQI+LOLrUabvBnjJeLxc1sokRtYNpeeKkSZuQKVjlcX3T/+V90//nUWQ==
+X-Argus: h/n+aQ==
+X-Gorgon: 8404e0110000356ed2027c371bf394b8f9c9c999cb1d462da0a7
+X-Helios: 6trBejr/mfx5ewR3Jnlp33gxeW6hAXL4DD1nEgcAofxf52Ew
+X-Ladon: 3N9T8A==
+X-Khronos: 1778317703
+
+[metasec+0x2b7724] lr=RX@0x12a7e2c0[libmetasec_ml.so]0x2be2c0 mapCtx=unidbg@0xe4ffe128
+  key   => ref=unidbg@0xe4ff7aa8 alloc=9 len=8 data=RW@0x12358600 text=X-Gorgon
+  value => ref=unidbg@0xe4ff7ae8 alloc=53 len=52 data=RW@0x13104b00 text=840480d200005467e497e9cebb6f7084ee18d9467c67f044280f
+  X-Gorgon native callstack:
+   0x12d6dc18 libhookzz.so+0xdc18
+    0x12d6dcbc libhookzz.so+0xdcbc
+    0x1216d08c
+    0x12c17694 libmetasec_ml.so+0x457694
+    0x12a9d278 libmetasec_ml.so+0x2dd278
+    0x12a8cf60 libmetasec_ml.so+0x2ccf60
+    0x12a8b7b4 libmetasec_ml.so+0x2cb7b4
+    0x12a7ef10 libmetasec_ml.so+0x2bef10
+    0x12a78138 libmetasec_ml.so+0x2b8138
+    0x12c17694 libmetasec_ml.so+0x457694
+    0x12a98224 libmetasec_ml.so+0x2d8224
+    0x12a8cf60 libmetasec_ml.so+0x2ccf60
+    0x12c17694 libmetasec_ml.so+0x457694
+    0x12ac3710 libmetasec_ml.so+0x303710
+    0x12a9c670 libmetasec_ml.so+0x2dc670
+    0x12a8cf60 libmetasec_ml.so+0x2ccf60
+    0x12a8b7b4 libmetasec_ml.so+0x2cb7b4
+    0x12a79dd4 libmetasec_ml.so+0x2b9dd4
+    0x12a88ad0 libmetasec_ml.so+0x2c8ad0
+    0x12a880c8 libmetasec_ml.so+0x2c80c8
+struct BatchFrame
+{
+    uint8_t unk_0000[0xc];
+    uint32_t record_index;
+    void* runtime_record_ctx;
+    uint8_t unk_0018[0x8];
+    uint64_t runtime_meta_count;
+    uint8_t unk_0028[0x6048];
+    uint64_t slots[0x20];
+    uint64_t aux_region_a[0x10];
+    uint64_t aux_region_b[0x10];
+};
+
+
+002ce7ec        struct opcode* x0 = *arg1
+002ce800        ASSERT(x0, ConstantPointerValue: 0x4ef468)
+002ce808        arg2->record_index = 0
+002ce824        uint64_t (* var_70)[0x10] = &arg2->aux_region_a
+002ce824        uint64_t (* var_68)[0x10] = &arg2->aux_region_b
+002dba7c        uint64_t x13_1 = *0x1315e060
+002dba94        uint64_t x10_4 = *0x1315e061
+002dba98        int64_t x11_2 = *0x1315e062
+002dba9c        arg2->slots[*0x1315e031] = arg2->slots[*0x1315e030] + *0x1315e032
+002dbaa8        uint32_t record_index = arg2->record_index
+002dbaac        struct opcode* x13_2 = *arg1
+002dbab0        *(arg2->slots[x13_1] + x11_2) = arg2->slots[x10_4]
+002dbac4        int64_t x12_3 = *0x1315e092
+002dbac8        int64_t* x8_4 = arg2->slots[*0x1315e090]
+002dbad0        struct opcode* x0_1 = x13_2 + muls.dp.d(record_index + 4, 0x30)
+002dbad4        int64_t x9_7 = arg2->slots[*0x1315e091]
+002dbad8        arg2->record_index = record_index + 4
+002dbadc        *(x8_4 + x12_3) = x9_7
+002dbae4        (&jump_table_8f0f20)[x0_1->field_28]
+
+sub_2ce7c8 0x2ce82c
+
+struct opcode __packed
+{
+    uint64_t field_0;
+    uint8_t field_8;
+    uint8_t field_9;
+    uint8_t field_a;
+    uint8_t field_b;
+    uint8_t field_c;
+    uint8_t field_d;
+    uint8_t field_e;
+    uint8_t field_f;
+    uint64_t field_10;
+    uint8_t field_18;
+    uint8_t field_19;
+    uint8_t field_1a;
+    uint8_t field_1b;
+    uint8_t field_1c;
+    uint8_t field_1d;
+    uint8_t field_1e;
+    uint8_t field_1f;
+    uint8_t field_20;
+    uint8_t field_21;
+    uint8_t field_22;
+    uint8_t field_23;
+    uint8_t field_24;
+    uint8_t field_25;
+    uint8_t field_26;
+    uint8_t field_27;
+    uint64_t* opcode_selector;
+};
+
+004f0f20 jmp_table
+
+
+0x2ce7fc
+    push x26 x27 x26=0xe4ffe3f0, x27=0xe4ffe470
+
+0x2d18d8
+    BatchFrame
+    0xe4ff8280-0xe4ffe4f0
+    0x13156030(opcode*)
+    0xe4ff828c->record_index
+    slots 0xe4ffe2f0
+    0xe4ffe2b0=0xe4ffe2f0+8
+    0xe4ffde10=0xe4ffe2f0+32
+    0xe4ffdee0=0xe4ffe2f0+64
+
+0x2d1ee0
+    opcode* 0x13156930
+    0xe4ffde10=0xe4ffe2f0+32
+    *0xe4ff828c =0x32
+    0xe4ffde10+0x18=0x12a191c4
+
+0x2d6f18
+    x0=0x13156960
+        0000: C0 69 15 13 00 00 00 00 90 69 15 13 00 00 00 00    .i.......i......
+        0010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+        0020: 00 00 00 00 00 00 00 00 4F 01 00 00 00 00 00 00    ........O.......
+        0030: 05 07 10 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+        0040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+        0050: 00 00 00 00 00 00 00 00 2B 00 00 00 00 00 00 00    ........+.......
+        0060: 09 07 06 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+    0x131569c0
+    0x300c70
+        0xe4ffe2f0+0x28 = 0xc4
+        0x73c4= 0xc4 or 0x7300
+        0xe4ffe2f0+48 = 0x73c4
+
+
+0x2cf55c
+    0x12370000=0xe4ffe2f0+40
+    0x1a=0x12370000+0x12
+    0xe4ff828c=0x36
+    0xe4ffe2f0+56 =0x1a
+
+0x2cf55c
+    0x12370000=0xe4ffe2f0+40
+    0xe4ffe2f0+40 =0xc7
+
+0x2cf140
+    0xc7=0xe4ffe2f0+40
+    0xe4ffe2f0+40 =0xc700
+
+
+0x2d1804
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

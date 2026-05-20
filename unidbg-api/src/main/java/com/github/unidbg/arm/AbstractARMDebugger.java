@@ -4,6 +4,7 @@ import capstone.api.Instruction;
 import capstone.api.RegsAccess;
 import com.alibaba.fastjson.JSONObject;
 import com.github.unidbg.*;
+import com.github.unidbg.Module;
 import com.github.unidbg.arm.backend.*;
 import com.github.unidbg.debugger.*;
 import com.github.unidbg.mcp.McpServer;
@@ -1217,7 +1218,9 @@ public abstract class AbstractARMDebugger implements Debugger {
                             on = false;
                         }
                     }
-                    sb.append(ARM.assembleDetail(emulator, ins, ins.getAddress(), history.thumb, on, maxLength)).append('\n');
+                    sb.append(ARM.assembleDetail(emulator, ins, ins.getAddress(), history.thumb, on, maxLength));
+                    appendInstructionRegs(sb, emulator, ins);
+                    sb.append('\n');
                     nextAddr += ins.getBytes().length;
                 }
             }
@@ -1235,7 +1238,9 @@ public abstract class AbstractARMDebugger implements Debugger {
                         on = false;
                     }
                 }
-                sb.append(ARM.assembleDetail(emulator, ins, nextAddr, thumb, on, maxLength)).append('\n');
+                sb.append(ARM.assembleDetail(emulator, ins, nextAddr, thumb, on, maxLength));
+                appendInstructionRegs(sb, emulator, ins);
+                sb.append('\n');
                 nextAddr += ins.getSize();
             }
         }
@@ -1260,10 +1265,19 @@ public abstract class AbstractARMDebugger implements Debugger {
         Instruction[] insns = emulator.disassemble(nextAddr, code, thumb, 0);
         for (Instruction ins : insns) {
             sb.append("    ");
-            sb.append(ARM.assembleDetail(emulator, ins, nextAddr, thumb, false, emulator.getMemory().getMaxLengthLibraryName().length())).append('\n');
+            sb.append(ARM.assembleDetail(emulator, ins, nextAddr, thumb, false, emulator.getMemory().getMaxLengthLibraryName().length()));
+            appendInstructionRegs(sb, emulator, ins);
+            sb.append('\n');
             nextAddr += ins.getSize();
         }
         System.out.println(sb);
+    }
+
+    private static void appendInstructionRegs(StringBuilder sb, Emulator<?> emulator, Instruction ins) {
+        String regs = ARM.formatUsedRegisters(emulator, ins);
+        if (regs != null) {
+            sb.append(" {regs: ").append(regs).append('}');
+        }
     }
 
     public static Module findModuleByAddress(Emulator<?> emulator, long address) {
