@@ -2793,7 +2793,15 @@ public class DalvikVM64 extends BaseVM implements VM {
         Pointer _NewLongArray = svcMemory.registerSvc(new Arm64Svc() {
             @Override
             public long handle(Emulator<?> emulator) {
-                throw new UnsupportedOperationException();
+                RegisterContext context = emulator.getContext();
+                int size = context.getIntArg(1);
+                if (log.isDebugEnabled()) {
+                    log.debug("NewLongArray size={}", size);
+                }
+                if (verbose || verboseFieldOperation) {
+                    System.out.printf("JNIEnv->NewLongArray(%d) was called from %s%n", size, context.getLRPointer());
+                }
+                return addLocalObject(new LongArray(DalvikVM64.this, new long[size]));
             }
         });
 
@@ -3050,7 +3058,17 @@ public class DalvikVM64 extends BaseVM implements VM {
         Pointer _GetLongArrayElements = svcMemory.registerSvc(new Arm64Svc() {
             @Override
             public long handle(Emulator<?> emulator) {
-                throw new UnsupportedOperationException();
+                RegisterContext context = emulator.getContext();
+                UnidbgPointer object = context.getPointerArg(1);
+                Pointer isCopy = context.getPointerArg(2);
+                LongArray array = getObject(object.toIntPeer());
+                if (log.isDebugEnabled()) {
+                    log.debug("GetLongArrayElements array={}, isCopy={}", array, isCopy);
+                }
+                if (verbose || verboseFieldOperation) {
+                    System.out.printf("JNIEnv->GetLongArrayElements(%s) => %s was called from %s%n", isCopy != null, array, context.getLRPointer());
+                }
+                return Objects.requireNonNull(array)._GetArrayCritical(emulator, isCopy).peer;
             }
         });
 
@@ -3131,7 +3149,16 @@ public class DalvikVM64 extends BaseVM implements VM {
         Pointer _ReleaseLongArrayElements = svcMemory.registerSvc(new Arm64Svc() {
             @Override
             public long handle(Emulator<?> emulator) {
-                throw new UnsupportedOperationException();
+                RegisterContext context = emulator.getContext();
+                UnidbgPointer object = context.getPointerArg(1);
+                Pointer pointer = context.getPointerArg(2);
+                int mode = context.getIntArg(3);
+                LongArray array = getObject(object.toIntPeer());
+                if (log.isDebugEnabled()) {
+                    log.debug("ReleaseLongArrayElements array={}, pointer={}, mode={}", array, pointer, mode);
+                }
+                Objects.requireNonNull(array)._ReleaseArrayCritical(pointer, mode);
+                return 0;
             }
         });
 

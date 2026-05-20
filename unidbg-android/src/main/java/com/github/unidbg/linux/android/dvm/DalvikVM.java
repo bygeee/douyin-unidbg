@@ -14,6 +14,7 @@ import com.github.unidbg.linux.android.dvm.array.ByteArray;
 import com.github.unidbg.linux.android.dvm.array.DoubleArray;
 import com.github.unidbg.linux.android.dvm.array.FloatArray;
 import com.github.unidbg.linux.android.dvm.array.IntArray;
+import com.github.unidbg.linux.android.dvm.array.LongArray;
 import com.github.unidbg.linux.android.dvm.array.PrimitiveArray;
 import com.github.unidbg.linux.android.dvm.array.ShortArray;
 import com.github.unidbg.memory.SvcMemory;
@@ -2714,7 +2715,15 @@ public class DalvikVM extends BaseVM implements VM {
         Pointer _NewLongArray = svcMemory.registerSvc(new ArmSvc() {
             @Override
             public long handle(Emulator<?> emulator) {
-                throw new UnsupportedOperationException();
+                RegisterContext context = emulator.getContext();
+                int size = context.getIntArg(1);
+                if (log.isDebugEnabled()) {
+                    log.debug("NewLongArray size={}", size);
+                }
+                if (verbose) {
+                    System.out.printf("JNIEnv->NewLongArray(%d) was called from %s%n", size, context.getLRPointer());
+                }
+                return addLocalObject(new LongArray(DalvikVM.this, new long[size]));
             }
         });
 
@@ -2736,7 +2745,14 @@ public class DalvikVM extends BaseVM implements VM {
         Pointer _GetLongArrayElements = svcMemory.registerSvc(new ArmSvc() {
             @Override
             public long handle(Emulator<?> emulator) {
-                throw new UnsupportedOperationException();
+                RegisterContext context = emulator.getContext();
+                UnidbgPointer object = context.getPointerArg(1);
+                Pointer isCopy = context.getPointerArg(2);
+                LongArray array = getObject(object.toIntPeer());
+                if (log.isDebugEnabled()) {
+                    log.debug("GetLongArrayElements array={}, isCopy={}", array, isCopy);
+                }
+                return Objects.requireNonNull(array)._GetArrayCritical(emulator, isCopy).toIntPeer();
             }
         });
 
@@ -3037,7 +3053,16 @@ public class DalvikVM extends BaseVM implements VM {
         Pointer _ReleaseLongArrayElements = svcMemory.registerSvc(new ArmSvc() {
             @Override
             public long handle(Emulator<?> emulator) {
-                throw new UnsupportedOperationException();
+                RegisterContext context = emulator.getContext();
+                UnidbgPointer object = context.getPointerArg(1);
+                Pointer pointer = context.getPointerArg(2);
+                int mode = context.getIntArg(3);
+                LongArray array = getObject(object.toIntPeer());
+                if (log.isDebugEnabled()) {
+                    log.debug("ReleaseLongArrayElements array={}, pointer={}, mode={}", array, pointer, mode);
+                }
+                Objects.requireNonNull(array)._ReleaseArrayCritical(pointer, mode);
+                return 0;
             }
         });
 
