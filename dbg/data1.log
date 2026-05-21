@@ -30,127 +30,47 @@ X-Khronos: 1778317703
     0x12a79dd4 libmetasec_ml.so+0x2b9dd4
     0x12a88ad0 libmetasec_ml.so+0x2c8ad0
     0x12a880c8 libmetasec_ml.so+0x2c80c8
-struct BatchFrame
-{
-    uint8_t unk_0000[0xc];
-    uint32_t record_index;
-    void* runtime_record_ctx;
-    uint8_t unk_0018[0x8];
-    uint64_t runtime_meta_count;
-    uint8_t unk_0028[0x6048];
-    uint64_t slots[0x20];
-    uint64_t aux_region_a[0x10];
-    uint64_t aux_region_b[0x10];
-};
 
+jmp_table   0x4f0f20
+BatchFrame    0xe4ff8280-0xE4FFE4F0
 
-002ce7ec        struct opcode* x0 = *arg1
-002ce800        ASSERT(x0, ConstantPointerValue: 0x4ef468)
-002ce808        arg2->record_index = 0
-002ce824        uint64_t (* var_70)[0x10] = &arg2->aux_region_a
-002ce824        uint64_t (* var_68)[0x10] = &arg2->aux_region_b
-002dba7c        uint64_t x13_1 = *0x1315e060
-002dba94        uint64_t x10_4 = *0x1315e061
-002dba98        int64_t x11_2 = *0x1315e062
-002dba9c        arg2->slots[*0x1315e031] = arg2->slots[*0x1315e030] + *0x1315e032
-002dbaa8        uint32_t record_index = arg2->record_index
-002dbaac        struct opcode* x13_2 = *arg1
-002dbab0        *(arg2->slots[x13_1] + x11_2) = arg2->slots[x10_4]
-002dbac4        int64_t x12_3 = *0x1315e092
-002dbac8        int64_t* x8_4 = arg2->slots[*0x1315e090]
-002dbad0        struct opcode* x0_1 = x13_2 + muls.dp.d(record_index + 4, 0x30)
-002dbad4        int64_t x9_7 = arg2->slots[*0x1315e091]
-002dbad8        arg2->record_index = record_index + 4
-002dbadc        *(x8_4 + x12_3) = x9_7
-002dbae4        (&jump_table_8f0f20)[x0_1->field_28]
-
-sub_2ce7c8 0x2ce82c
-
-struct opcode __packed
-{
-    uint64_t field_0;
-    uint8_t field_8;
-    uint8_t field_9;
-    uint8_t field_a;
-    uint8_t field_b;
-    uint8_t field_c;
-    uint8_t field_d;
-    uint8_t field_e;
-    uint8_t field_f;
-    uint64_t field_10;
-    uint8_t field_18;
-    uint8_t field_19;
-    uint8_t field_1a;
-    uint8_t field_1b;
-    uint8_t field_1c;
-    uint8_t field_1d;
-    uint8_t field_1e;
-    uint8_t field_1f;
-    uint8_t field_20;
-    uint8_t field_21;
-    uint8_t field_22;
-    uint8_t field_23;
-    uint8_t field_24;
-    uint8_t field_25;
-    uint8_t field_26;
-    uint8_t field_27;
-    uint64_t* opcode_selector;
-};
-
-004f0f20 jmp_table
-
-
-0x2ce7fc
-    push x26 x27 x26=0xe4ffe3f0, x27=0xe4ffe470
+0x2ce7c8
+    push data x26=0xe4ffe3f0, x27=0xe4ffe470
 
 0x2d18d8
-    BatchFrame
-    0xe4ff8280-0xe4ffe4f0
-    0x13156030(opcode*)
     0xe4ff828c->record_index
-    slots 0xe4ffe2f0
-    0xe4ffe2b0=0xe4ffe2f0+8
-    0xe4ffde10=0xe4ffe2f0+32
-    0xe4ffdee0=0xe4ffe2f0+64
+    int64_t x10 = *(arg4 + (*arg1 << 3)) 0xe4ffe2b0=0xe4ffe2f0+8
+    *(arg4 + (x13 << 3)) = x10 + x12 0xe4ffe2f0+8= 0xe4ffe2b0+0xfffffffffffffb60
+
+0x2d1b78
+    0x13156030=0x13156038+8
+    0xe4ffe2f0+5*8 =0x12370000
 
 0x2d1ee0
-    opcode* 0x13156930
-    0xe4ffde10=0xe4ffe2f0+32
-    *0xe4ff828c =0x32
-    0xe4ffde10+0x18=0x12a191c4
-
-0x2d6f18
-    x0=0x13156960
-        0000: C0 69 15 13 00 00 00 00 90 69 15 13 00 00 00 00    .i.......i......
-        0010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-        0020: 00 00 00 00 00 00 00 00 4F 01 00 00 00 00 00 00    ........O.......
-        0030: 05 07 10 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-        0040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-        0050: 00 00 00 00 00 00 00 00 2B 00 00 00 00 00 00 00    ........+.......
-        0060: 09 07 06 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-    0x131569c0
-    0x300c70
-        0xe4ffe2f0+0x28 = 0xc4
-        0x73c4= 0xc4 or 0x7300
-        0xe4ffe2f0+48 = 0x73c4
 
 
-0x2cf55c
-    0x12370000=0xe4ffe2f0+40
-    0x1a=0x12370000+0x12
-    0xe4ff828c=0x36
-    0xe4ffe2f0+56 =0x1a
-
-0x2cf55c
-    0x12370000=0xe4ffe2f0+40
-    0xe4ffe2f0+40 =0xc7
-
-0x2cf140
-    0xc7=0xe4ffe2f0+40
-    0xe4ffe2f0+40 =0xc700
 
 
-0x2d1804
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
