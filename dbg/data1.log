@@ -31,6 +31,41 @@ X-Khronos: 1778317703
     0x12a88ad0 libmetasec_ml.so+0x2c8ad0
     0x12a880c8 libmetasec_ml.so+0x2c80c8
 
+jmp_table   0x4f0f20
+BatchFrame    0xe4ff8280-0xE4FFE4F0
+
+0x2ce7c8
+    push data x26=0xe4ffe3f0, x27=0xe4ffe470
+
+0x2d18d8
+    0xe4ff828c->record_index
+    int64_t x10 = *(arg4 + (*arg1 << 3)) 0xe4ffe2b0=0xe4ffe2f0+8
+    *(arg4 + (x13 << 3)) = x10 + x12 0xe4ffe2f0+8= 0xe4ffe2b0+0xfffffffffffffb60
+
+0x2d1b78
+    0x13156030=0x13156038+8
+    0xe4ffe2f0+5*8 =0x12370000
+
+0x2d1ee0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
