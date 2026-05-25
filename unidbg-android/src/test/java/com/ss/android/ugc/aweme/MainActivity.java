@@ -53,7 +53,7 @@ public class MainActivity {
     // 是否安装单步调试断点。
     private static final boolean Open_break = false;
     // 手工指定固定毫秒时间戳，设为 null 时走自动推断。
-    private static final Long FIXED_TIME_MILLIS = 1779160424642l;
+    private static final Long FIXED_TIME_MILLIS = 1779160424642L;
     // 是否从请求参数中自动提取固定时间戳。
     private static final boolean AUTO_FIX_TIME_FROM_REQUEST = true;
     // 是否同步改写 URL 和 header 里的时间字段。
@@ -69,15 +69,17 @@ public class MainActivity {
     // 是否监控更早阶段暂存 X-Gorgon 值的内存区域写入。
     private static final boolean ENABLE_EARLY_GORGON_VALUE_TRACE = true;
     // 是否在执行到 sub_259154 时打印 *(arg2 + 8) 的源字符串。
-    private static final boolean ENABLE_STRING_COPY_HOOK = true;
+    private static final boolean ENABLE_STRING_COPY_HOOK = false;
     // 是否在最终 memcpy 前直接打印 x1/src。
     private static final boolean ENABLE_GORGON_MEMCPY_SOURCE_HOOK = true;
+    // 是否在命中 sub_257ae0 逐字节追加字符时打印一次调用栈。
+    private static final boolean ENABLE_GORGON_CHAR_APPEND_CALLSTACK = true;
     // 是否打印组件插入点的 key/value 文本。
     private static final boolean ENABLE_LOG_COMPONENT_VALUES = true;
     // 是否打印 X-Gorgon 的原生调用栈。
     private static final boolean ENABLE_LOG_GORGON_CALLSTACK = true;
     // 是否打印 sub_259154 里 *(arg2+8) 的细节。
-    private static final boolean ENABLE_LOG_STRING_COPY_DETAILS = true;
+    private static final boolean ENABLE_LOG_STRING_COPY_DETAILS = false;
     // 是否打印 memcpy 前后的源地址与内容。
     private static final boolean ENABLE_LOG_GORGON_MEMCPY_ARGS = true;
     // 是否打印 memcpy 源地址前后的候选窗口。
@@ -131,6 +133,8 @@ public class MainActivity {
     private static final long METASEC_MAP_INSERT_PRECALL_OFFSET = 0x2c615cL;
     // sub_2c6030 内部，真正调用 sub_2b7724 的位置。
     private static final long METASEC_MAP_INSERT_CALL_OFFSET = 0x2c6160L;
+    // sub_257ae0：向字符串尾部追加单个字符。
+    private static final long METASEC_GORGON_APPEND_CHAR_OFFSET = 0x257ae0L;
     // 匹配 URL 中 _rticket 参数的正则。
     private static final Pattern RTICKET_PATTERN = Pattern.compile("([?&])_rticket=(\\d+)");
     // 匹配 URL 中 ts 参数的正则。
@@ -274,6 +278,7 @@ public class MainActivity {
         TraceHook gorgonSourceWriteTrace = null;
         List<TraceHook> earlyGorgonValueWriteTraces = new ArrayList<>();
         final boolean[] gorgonMemcpyArgsPrinted = {false};
+        final boolean[] gorgonCharAppendCallstackPrinted = {false};
         if (ENABLE_GLOBAL_VALUE_TRACE) {
             long traceBegin = GLOBAL_VALUE_TRACE_ADDRESS;
             long traceEnd = GLOBAL_VALUE_TRACE_ADDRESS + GLOBAL_VALUE_TRACE_SIZE - 1L;
@@ -310,7 +315,26 @@ public class MainActivity {
             long traceEnd = GORGON_SOURCE_TRACE_ADDRESS + GORGON_SOURCE_TRACE_SIZE - 1L;
             System.out.printf("gorgon source trace enabled: [0x%x, 0x%x] size=0x%x%n",
                     traceBegin, traceEnd, GORGON_SOURCE_TRACE_SIZE);
-            gorgonSourceWriteTrace = emulator.traceWrite(traceBegin, traceEnd);
+            gorgonSourceWriteTrace = emulator.traceWrite(traceBegin, traceEnd, (emu, address, size, value) -> {
+                if (ENABLE_GORGON_CHAR_APPEND_CALLSTACK &&
+                        !gorgonCharAppendCallstackPrinted[0] &&
+                        address >= GORGON_SOURCE_TRACE_ADDRESS &&
+                        address <= GORGON_SOURCE_TRACE_ADDRESS + GORGON_SOURCE_TRACE_SIZE - 1L) {
+                    long pc = emu.getBackend().reg_read(Arm64Const.UC_ARM64_REG_PC).longValue();
+                    long offset = pc - metasecModule.base;
+                    if (offset >= METASEC_GORGON_APPEND_CHAR_OFFSET && offset < METASEC_GORGON_APPEND_CHAR_OFFSET + 0x80L) {
+                        System.out.printf("[gorgon append char] pc=%s write=0x%x size=%d value=0x%x moduleOffset=0x%x%n",
+                                emu.getContext().getPCPointer(),
+                                address,
+                                size,
+                                value,
+                                offset);
+                        dumpNativeCallstack(30);
+                        gorgonCharAppendCallstackPrinted[0] = true;
+                    }
+                }
+                return true;
+            });
         }
         if (ENABLE_EARLY_GORGON_VALUE_TRACE && EARLY_GORGON_VALUE_TRACE_SIZE > 0) {
             for (long traceBegin : EARLY_GORGON_VALUE_TRACE_ADDRESSES) {
