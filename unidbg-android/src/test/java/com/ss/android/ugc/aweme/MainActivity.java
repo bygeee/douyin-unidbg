@@ -86,6 +86,10 @@ public class MainActivity {
     private static final boolean ENABLE_LOG_GORGON_SOURCE_CANDIDATES = true;
     // 是否打印 sub_2b7724 插入前的 key/value 对象。
     private static final boolean ENABLE_LOG_MAP_INSERT_DETAILS = true;
+    // 是否分析 sub_2c20d4 的输入、KSA seed 和输出包。
+    private static final boolean ENABLE_SUB_2C20D4_ANALYSIS = true;
+    // 是否分析 sub_2c269c 中传给 sub_2c20d4 的 20 字节输入是如何逐段拼出来的。
+    private static final boolean ENABLE_SUB_2C269C_INPUT_BUILD_ANALYSIS = true;
     // 需要全局监控的 value 缓冲区起始地址。
     private static final long GLOBAL_VALUE_TRACE_ADDRESS = 0x13104b00L;
     // 需要全局监控的 value 缓冲区长度。
@@ -135,6 +139,30 @@ public class MainActivity {
     private static final long METASEC_MAP_INSERT_CALL_OFFSET = 0x2c6160L;
     // sub_257ae0：向字符串尾部追加单个字符。
     private static final long METASEC_GORGON_APPEND_CHAR_OFFSET = 0x257ae0L;
+    // sub_2c20d4：自定义封包/RC4-like 变体加密函数入口。
+    private static final long METASEC_PACKET_CRYPT_OFFSET = 0x2c20d4L;
+    // sub_2c20d4：输出对象已分配、输入仍可直接读取的位置。
+    private static final long METASEC_PACKET_CRYPT_AFTER_ALLOC_OFFSET = 0x2c2144L;
+    // sub_2c20d4：KSA 即将开始，8 字节 seed 已经落到栈上的位置。
+    private static final long METASEC_PACKET_CRYPT_KSA_OFFSET = 0x2c21a8L;
+    // sub_2c20d4：包头和密文都已写完、准备返回的位置。
+    private static final long METASEC_PACKET_CRYPT_FINAL_OFFSET = 0x2c24d4L;
+    // sub_2c269c：第 1 段 4 字节已拼进 sp+0x30 累加器。
+    private static final long METASEC_PACKET_INPUT_STAGE1_READY_OFFSET = 0x2c2824L;
+    // sub_2c269c：第 2 段 4 字节已拼进 sp+0x30 累加器。
+    private static final long METASEC_PACKET_INPUT_STAGE2_READY_OFFSET = 0x2c2838L;
+    // sub_2c269c：第 3 段 4 字节已拼进 sp+0x30 累加器。
+    private static final long METASEC_PACKET_INPUT_STAGE3_READY_OFFSET = 0x2c284cL;
+    // sub_2c269c：第 4 段 4 字节已拼进 sp+0x30 累加器。
+    private static final long METASEC_PACKET_INPUT_STAGE4_READY_OFFSET = 0x2c2864L;
+    // sub_2c269c：第 5 段 4 字节已拼进 sp+0x30 累加器。
+    private static final long METASEC_PACKET_INPUT_STAGE5_READY_OFFSET = 0x2c287cL;
+    // sub_2c269c：即将调用 sub_2c20d4，x0 已经指向最终 20 字节输入对象。
+    private static final long METASEC_PACKET_INPUT_PRE_CRYPT_CALL_OFFSET = 0x2c28f4L;
+    // sub_2c269c：ctx 已取出，stage1/stage2/stage3 的源对象都还能原样观察。
+    private static final long METASEC_PACKET_CTX_SNAPSHOT_OFFSET = 0x2c26e4L;
+    // sub_2696dc/sub_2696f4：stage1 原始 (ptr,len,flag) 已准备好、即将交给 sub_2694bc。
+    private static final long METASEC_STAGE1_RAW_SOURCE_OFFSET = 0x26970cL;
     // 匹配 URL 中 _rticket 参数的正则。
     private static final Pattern RTICKET_PATTERN = Pattern.compile("([?&])_rticket=(\\d+)");
     // 匹配 URL 中 ts 参数的正则。
@@ -156,6 +184,14 @@ public class MainActivity {
     private final List<MemoryBlock> manualBlocks = new ArrayList<>();
     // 只打印一次 X-Gorgon 原生调用栈的标记。
     private boolean gorgonCallstackPrinted;
+    // 记录最近一次 sub_2c20d4 调用的 arg1 地址。
+    private long lastSub2c20d4Arg1Peer;
+    // 记录最近一次 sub_2c20d4 调用的 arg2。
+    private short lastSub2c20d4Arg2;
+    // 记录最近一次 sub_2c20d4 调用的 outHolder 地址。
+    private long lastSub2c20d4OutHolderPeer;
+    // 避免同一轮 KSA 循环重复打印相同 seed。
+    private boolean sub2c20d4KsaLogged;
 
     // 构造模拟器、依赖库和 metasec 主模块。
     private MainActivity() {
@@ -268,6 +304,27 @@ public class MainActivity {
                                     offset, keyObj, valueObj);
                             System.out.println("  key   => " + describeMssdkStringRef(keyObj));
                             System.out.println("  value => " + describeMssdkStringRef(valueObj));
+                        }
+                        if (ENABLE_SUB_2C20D4_ANALYSIS &&
+                                (offset == METASEC_PACKET_CRYPT_OFFSET ||
+                                        offset == METASEC_PACKET_CRYPT_AFTER_ALLOC_OFFSET ||
+                                        offset == METASEC_PACKET_CRYPT_KSA_OFFSET ||
+                                        offset == METASEC_PACKET_CRYPT_FINAL_OFFSET)) {
+                            logSub2c20d4AsmTrace(offset, insn.toString());
+                        }
+                        if (ENABLE_SUB_2C269C_INPUT_BUILD_ANALYSIS &&
+                                (offset == METASEC_PACKET_CTX_SNAPSHOT_OFFSET ||
+                                        offset == METASEC_PACKET_INPUT_STAGE1_READY_OFFSET ||
+                                        offset == METASEC_PACKET_INPUT_STAGE2_READY_OFFSET ||
+                                        offset == METASEC_PACKET_INPUT_STAGE3_READY_OFFSET ||
+                                        offset == METASEC_PACKET_INPUT_STAGE4_READY_OFFSET ||
+                                        offset == METASEC_PACKET_INPUT_STAGE5_READY_OFFSET ||
+                                        offset == METASEC_PACKET_INPUT_PRE_CRYPT_CALL_OFFSET)) {
+                            logSub2c269cInputBuildTrace(offset, insn.toString());
+                        }
+                        if (ENABLE_SUB_2C269C_INPUT_BUILD_ANALYSIS &&
+                                offset == METASEC_STAGE1_RAW_SOURCE_OFFSET) {
+                            logStage1RawSourceTrace(offset, insn.toString());
                         }
                     }
                 }
@@ -450,6 +507,267 @@ public class MainActivity {
         }, begin, end, emulator);
     }
 
+    // 在 traceCode 命中关键汇编偏移时直接打印寄存器和对象状态。
+    private void logSub2c20d4AsmTrace(long offset, String insnText) {
+        Backend backend = emulator.getBackend();
+        if (offset == METASEC_PACKET_CRYPT_OFFSET) {
+            System.out.printf("[metasec+0x%x] sub_2c20d4 asm %s%n", offset, insnText);
+            long x0 = reg64(backend, Arm64Const.UC_ARM64_REG_X0);
+            long x1 = reg64(backend, Arm64Const.UC_ARM64_REG_X1);
+            long x8 = reg64(backend, Arm64Const.UC_ARM64_REG_X8);
+            long sp = reg64(backend, Arm64Const.UC_ARM64_REG_SP);
+            long fp = reg64(backend, Arm64Const.UC_ARM64_REG_FP);
+            lastSub2c20d4Arg1Peer = x0;
+            lastSub2c20d4Arg2 = (short) x1;
+            lastSub2c20d4OutHolderPeer = x8;
+            sub2c20d4KsaLogged = false;
+            System.out.printf("  regs  => x0(arg1)=0x%x x1(arg2)=0x%x x8(arg3)=0x%x sp=0x%x fp=0x%x%n",
+                    x0, x1, x8, sp, fp);
+            logSub2c20d4Input(backend,
+                    UnidbgPointer.pointer(emulator, x0),
+                    (short) x1,
+                    UnidbgPointer.pointer(emulator, x8));
+            return;
+        }
+        if (offset == METASEC_PACKET_CRYPT_AFTER_ALLOC_OFFSET) {
+            System.out.printf("[metasec+0x%x] sub_2c20d4 asm %s%n", offset, insnText);
+            long x19 = reg64(backend, Arm64Const.UC_ARM64_REG_X19);
+            long x20 = reg64(backend, Arm64Const.UC_ARM64_REG_X20);
+            long x21 = reg64(backend, Arm64Const.UC_ARM64_REG_X21);
+            long x0 = reg64(backend, Arm64Const.UC_ARM64_REG_X0);
+            System.out.printf("  regs  => x19(outHolder)=0x%x x20(arg1)=0x%x x21(outRef)=0x%x x0(ret)=0x%x%n",
+                    x19, x20, x21, x0);
+            logSub2c20d4Input(backend,
+                    UnidbgPointer.pointer(emulator, lastSub2c20d4Arg1Peer),
+                    lastSub2c20d4Arg2,
+                    UnidbgPointer.pointer(emulator, x19));
+            return;
+        }
+        if (offset == METASEC_PACKET_CRYPT_KSA_OFFSET) {
+            if (sub2c20d4KsaLogged) {
+                return;
+            }
+            sub2c20d4KsaLogged = true;
+            System.out.printf("[metasec+0x%x] sub_2c20d4 asm %s%n", offset, insnText);
+            long x19 = reg64(backend, Arm64Const.UC_ARM64_REG_X19);
+            long x20 = reg64(backend, Arm64Const.UC_ARM64_REG_X20);
+            long x21 = reg64(backend, Arm64Const.UC_ARM64_REG_X21);
+            long x22 = reg64(backend, Arm64Const.UC_ARM64_REG_X22);
+            long sp = reg64(backend, Arm64Const.UC_ARM64_REG_SP);
+            long fp = reg64(backend, Arm64Const.UC_ARM64_REG_FP);
+            System.out.printf("  regs  => x19(outHolder)=0x%x x20(keyPtr?)=0x%x x21(keyPtr+4?)=0x%x x22=0x%x sp=0x%x fp=0x%x%n",
+                    x19, x20, x21, x22, sp, fp);
+            logSub2c20d4KeyMaterial(backend, UnidbgPointer.pointer(emulator, x19));
+            return;
+        }
+        if (offset == METASEC_PACKET_CRYPT_FINAL_OFFSET) {
+            System.out.printf("[metasec+0x%x] sub_2c20d4 asm %s%n", offset, insnText);
+            long x19 = reg64(backend, Arm64Const.UC_ARM64_REG_X19);
+            long x21 = reg64(backend, Arm64Const.UC_ARM64_REG_X21);
+            long x24 = reg64(backend, Arm64Const.UC_ARM64_REG_X24);
+            System.out.printf("  regs  => x19(outHolder)=0x%x x21(payloadLen)=0x%x x24(outBuf)=0x%x%n",
+                    x19, x21, x24);
+            logSub2c20d4Output(backend, UnidbgPointer.pointer(emulator, x19), (int) x21);
+        }
+    }
+
+    // 打印 sub_2c269c 内部 20 字节输入在进入 sub_2c20d4 前的逐段拼装过程。
+    private void logSub2c269cInputBuildTrace(long offset, String insnText) {
+        Backend backend = emulator.getBackend();
+        UnidbgPointer sp = UnidbgPointer.pointer(emulator, reg64(backend, Arm64Const.UC_ARM64_REG_SP));
+        UnidbgPointer fp = UnidbgPointer.pointer(emulator, reg64(backend, Arm64Const.UC_ARM64_REG_FP));
+        if (offset == METASEC_PACKET_CTX_SNAPSHOT_OFFSET) {
+            logSub2c269cContextSnapshot(insnText);
+            return;
+        }
+        if (sp == null) {
+            System.out.printf("[metasec+0x%x] sub_2c269c input-build sp=null%n", offset);
+            return;
+        }
+
+        UnidbgPointer inputRef = UnidbgPointer.pointer(emulator, sp.peer + 0x30L);
+        int inputLen = readMssdkStringRefLen(inputRef);
+        UnidbgPointer inputBuf = readMssdkStringRefData(inputRef);
+        byte[] inputBytes = readBytes(inputBuf, Math.max(inputLen, 0));
+
+        System.out.printf("[metasec+0x%x] sub_2c269c build %s%n", offset, insnText);
+        if (offset == METASEC_PACKET_INPUT_STAGE1_READY_OFFSET) {
+            UnidbgPointer src1Ref = fp == null ? null : readPointerSlot(fp.peer - 0x30L);
+            logSub2c269cInputStage("stage1", inputRef, inputBytes, "src1(first 4)", readMssdkRefPrefixBytes(src1Ref, 4));
+            System.out.println("  src1-ref => " + describeMssdkStringRef(src1Ref));
+            return;
+        }
+        if (offset == METASEC_PACKET_INPUT_STAGE2_READY_OFFSET) {
+            UnidbgPointer src2Ref = UnidbgPointer.pointer(emulator, reg64(backend, Arm64Const.UC_ARM64_REG_X21));
+            logSub2c269cInputStage("stage2", inputRef, inputBytes, "src2(first 4)", readMssdkRefPrefixBytes(src2Ref, 4));
+            System.out.println("  src2-ref => " + describeMssdkStringRef(src2Ref));
+            return;
+        }
+        if (offset == METASEC_PACKET_INPUT_STAGE3_READY_OFFSET) {
+            UnidbgPointer src3Ref = fp == null ? null : readPointerSlot(fp.peer - 0x40L);
+            logSub2c269cInputStage("stage3", inputRef, inputBytes, "src3(first 4)", readMssdkRefPrefixBytes(src3Ref, 4));
+            System.out.println("  src3-ref => " + describeMssdkStringRef(src3Ref));
+            return;
+        }
+        if (offset == METASEC_PACKET_INPUT_STAGE4_READY_OFFSET) {
+            UnidbgPointer src4 = fp == null ? null : UnidbgPointer.pointer(emulator, fp.peer - 0x44L);
+            logSub2c269cInputStage("stage4", inputRef, inputBytes, "src4(sub_181e20 ret)", readBytes(src4, 4));
+            if (src4 != null) {
+                System.out.printf("  src4-int => 0x%08x%n", src4.getInt(0));
+            }
+            return;
+        }
+        if (offset == METASEC_PACKET_INPUT_STAGE5_READY_OFFSET) {
+            UnidbgPointer src5 = UnidbgPointer.pointer(emulator, sp.peer + 0x48L);
+            logSub2c269cInputStage("stage5", inputRef, inputBytes, "src5(khronos bytes)", readBytes(src5, 4));
+            if (src5 != null) {
+                System.out.printf("  src5-int => 0x%08x rawCtxField=0x%08x%n", src5.getInt(0), (int) reg64(backend, Arm64Const.UC_ARM64_REG_X20));
+            }
+            return;
+        }
+
+        long x0 = reg64(backend, Arm64Const.UC_ARM64_REG_X0);
+        long x1 = reg64(backend, Arm64Const.UC_ARM64_REG_X1);
+        long x8 = reg64(backend, Arm64Const.UC_ARM64_REG_X8);
+        System.out.printf("  pre-call => x0(inputRef)=0x%x x1(arg2)=0x%x x8(outHolder)=0x%x%n", x0, x1, x8);
+        System.out.println("  input-ref => " + describeMssdkStringRef(inputRef));
+        System.out.printf("  assembled => %s [%s]%n", Hex.encodeHexString(inputBytes), formatHexChunks(inputBytes, 4));
+    }
+
+    // 在 sub_2c269c 刚取出 ctx 时打印关键字段，直接对应 stage1/stage2/stage5 的来源。
+    private void logSub2c269cContextSnapshot(String insnText) {
+        Backend backend = emulator.getBackend();
+        long x21 = reg64(backend, Arm64Const.UC_ARM64_REG_X21);
+        long x24 = reg64(backend, Arm64Const.UC_ARM64_REG_X24);
+        long x20 = reg64(backend, Arm64Const.UC_ARM64_REG_X20);
+        long x22 = reg64(backend, Arm64Const.UC_ARM64_REG_X22);
+        UnidbgPointer ctxRef = UnidbgPointer.pointer(emulator, x21);
+        UnidbgPointer ctx = UnidbgPointer.pointer(emulator, x24);
+        UnidbgPointer stage2Ref = ctx == null ? null : UnidbgPointer.pointer(emulator, ctx.peer + 0x28L);
+        UnidbgPointer stage1Obj = ctx == null ? null : UnidbgPointer.pointer(emulator, ctx.peer + 0x40L);
+        short arg2 = ctx == null ? 0 : ctx.getShort(0xdc);
+        System.out.printf("[metasec+0x%x] sub_2c269c ctx %s%n", METASEC_PACKET_CTX_SNAPSHOT_OFFSET, insnText);
+        System.out.printf("  regs  => x21(ctxRef)=0x%x x24(ctx)=0x%x x20(khronosRaw)=0x%x x22(mode)=0x%x%n",
+                x21, x24, x20, x22);
+        System.out.println("  ctx-ref => " + describeMssdkStringRef(ctxRef));
+        System.out.println("  stage2-ref(ctx+0x28) => " + describeMssdkStringRef(stage2Ref));
+        System.out.println("  stage1-obj(ctx+0x40) => " + describeSliceObject(stage1Obj));
+        System.out.printf("  ctx-fields => mode=%d arg2=0x%04x khronosRaw=0x%08x%n",
+                (int) x22,
+                arg2 & 0xffff,
+                (int) x20);
+    }
+
+    // 打印 sub_2c269c 某一轮 4 字节拼接后的累加器状态。
+    private void logSub2c269cInputStage(String label, UnidbgPointer inputRef, byte[] assembled, String srcLabel, byte[] srcBytes) {
+        System.out.printf("  %s => %s%n", label, describeMssdkStringRef(inputRef));
+        System.out.printf("  %s => %s%n", srcLabel, Hex.encodeHexString(srcBytes));
+        System.out.printf("  assembled => %s [%s]%n", Hex.encodeHexString(assembled), formatHexChunks(assembled, 4));
+    }
+
+    // 打印 stage1 在 sub_2694bc 处理前真正看到的 (ptr,len,flag)。
+    private void logStage1RawSourceTrace(long offset, String insnText) {
+        Backend backend = emulator.getBackend();
+        UnidbgPointer rawPtr = UnidbgPointer.pointer(emulator, reg64(backend, Arm64Const.UC_ARM64_REG_X0));
+        int rawLen = (int) reg64(backend, Arm64Const.UC_ARM64_REG_X1);
+        int flag = backend.reg_read(Arm64Const.UC_ARM64_REG_X2).intValue();
+        byte[] rawBytes = readBytes(rawPtr, Math.max(Math.min(rawLen, 0x20), 0));
+        System.out.printf("[metasec+0x%x] sub_2696dc stage1-raw %s%n", offset, insnText);
+        System.out.printf("  regs  => x0(rawPtr)=%s x1(rawLen)=0x%x x2(flag)=0x%x%n", rawPtr, rawLen, flag);
+        System.out.printf("  raw   => %s%n", describeSizedBuffer(rawPtr, rawLen));
+        System.out.printf("  first => %s [%s]%n", Hex.encodeHexString(rawBytes), formatHexChunks(rawBytes, 4));
+    }
+
+    // 打印 sub_2c20d4 入口时的输入对象、arg2 和输出对象地址。
+    private void logSub2c20d4Input(Backend backend, UnidbgPointer arg1, short arg2, UnidbgPointer outHolder) {
+        UnidbgPointer outRef = outHolder == null ? null
+                : UnidbgPointer.pointer(emulator, UnidbgPointer.nativeValue(outHolder.getPointer(0)));
+        UnidbgPointer outBuf = readMssdkStringRefData(outRef);
+        int inputLen = readMssdkStringRefLen(arg1);
+        System.out.printf("[metasec+0x%x] sub_2c20d4 input arg1=%s arg2=0x%04x outHolder=%s outRef=%s outBuf=%s%n",
+                METASEC_PACKET_CRYPT_OFFSET,
+                arg1,
+                arg2 & 0xffff,
+                outHolder,
+                outRef,
+                outBuf);
+        System.out.println("  input => " + describeMssdkStringRef(arg1));
+        if (outRef != null) {
+            System.out.println("  out   => " + describeMssdkStringRef(outRef));
+        }
+        if (inputLen >= 0 && outBuf != null) {
+            System.out.printf("  packet layout => header=6 payload=%d total=%d%n", inputLen, inputLen + 6);
+        }
+    }
+
+    // 打印 sub_2c20d4 在 KSA 前栈上实际使用的 8 字节 seed。
+    private void logSub2c20d4KeyMaterial(Backend backend, UnidbgPointer outHolder) {
+        UnidbgPointer fp = UnidbgPointer.pointer(emulator, backend.reg_read(Arm64Const.UC_ARM64_REG_FP).longValue());
+        UnidbgPointer outRef = outHolder == null ? null
+                : UnidbgPointer.pointer(emulator, UnidbgPointer.nativeValue(outHolder.getPointer(0)));
+        UnidbgPointer outBuf = readMssdkStringRefData(outRef);
+        if (fp == null) {
+            System.out.printf("[metasec+0x%x] sub_2c20d4 key material fp=null%n", METASEC_PACKET_CRYPT_KSA_OFFSET);
+            return;
+        }
+        UnidbgPointer keyPtr = UnidbgPointer.pointer(emulator, fp.peer - 0x18L);
+        byte[] keyBytes = readBytes(keyPtr, 8);
+        short arg2 = readStackShort(0x14);
+        long outBufAddr = outBuf == null ? 0 : outBuf.peer;
+        System.out.printf("[metasec+0x%x] sub_2c20d4 ksa-seed keyPtr=%s key=%s%n",
+                METASEC_PACKET_CRYPT_KSA_OFFSET,
+                keyPtr,
+                Hex.encodeHexString(keyBytes));
+        System.out.printf("  key-bytes => [%s]%n", formatByteList(keyBytes));
+        System.out.printf("  key-hint  => arg2=0x%04x outBuf=0x%x low=0x%02x high=0x%02x; 这 8 字节是运行时真正参与 KSA 的 seed%n",
+                arg2 & 0xffff,
+                outBufAddr,
+                outBufAddr & 0xff,
+                (outBufAddr >> 8) & 0xff);
+    }
+
+    // 打印 sub_2c20d4 返回前的 6 字节包头和密文区。
+    private void logSub2c20d4Output(Backend backend, UnidbgPointer outHolder, int payloadLen) {
+        UnidbgPointer outRef = outHolder == null ? null
+                : UnidbgPointer.pointer(emulator, UnidbgPointer.nativeValue(outHolder.getPointer(0)));
+        UnidbgPointer outBuf = readMssdkStringRefData(outRef);
+        if (outBuf == null || payloadLen < 0) {
+            System.out.printf("[metasec+0x%x] sub_2c20d4 output unavailable outRef=%s outBuf=%s payloadLen=%d%n",
+                    METASEC_PACKET_CRYPT_FINAL_OFFSET, outRef, outBuf, payloadLen);
+            return;
+        }
+        int packetLen = payloadLen + 6;
+        byte[] packet = readBytes(outBuf, packetLen);
+        int headerLen = Math.min(6, packet.length);
+        byte[] header = new byte[headerLen];
+        System.arraycopy(packet, 0, header, 0, headerLen);
+        int cipherLen = Math.max(0, packet.length - 6);
+        byte[] cipher = new byte[cipherLen];
+        if (cipherLen > 0) {
+            System.arraycopy(packet, 6, cipher, 0, cipherLen);
+        }
+        int arg2 = headerLen >= 6 ? ((header[4] & 0xff) | ((header[5] & 0xff) << 8)) : -1;
+        System.out.printf("[metasec+0x%x] sub_2c20d4 output outRef=%s outBuf=%s packetLen=%d%n",
+                METASEC_PACKET_CRYPT_FINAL_OFFSET,
+                outRef,
+                outBuf,
+                packetLen);
+        System.out.printf("  header => %s [flag0=0x%02x version=0x%02x ptrLo=0x%02x ptrHi=0x%02x arg2=0x%04x]%n",
+                Hex.encodeHexString(header),
+                headerLen > 0 ? header[0] & 0xff : 0,
+                headerLen > 1 ? header[1] & 0xff : 0,
+                headerLen > 2 ? header[2] & 0xff : 0,
+                headerLen > 3 ? header[3] & 0xff : 0,
+                arg2 & 0xffff);
+        System.out.printf("  cipher => %s%n", Hex.encodeHexString(cipher));
+        System.out.println("  ref    => " + describeMssdkStringRef(outRef));
+    }
+
+    // 读取 64 位寄存器值，避免在日志代码里重复样板。
+    private long reg64(Backend backend, int regId) {
+        return backend.reg_read(regId).longValue();
+    }
+
     // 在目标偏移安装临时断点并打印 PC/LR/调用栈。
     private void installBreakpoint() {
         emulator.attach().addBreakPoint(metasecModule, Break_offset, (emu, address) -> {
@@ -496,6 +814,53 @@ public class MainActivity {
                     ref, alloc, len, data, describeSizedBuffer(data, len));
         } catch (Exception e) {
             return "ref=" + ref + " <decode failed: " + e.getMessage() + ">";
+        }
+    }
+
+    // 格式化 sub_2696dc 使用的 slice/buffer 对象：重点看 len、data 和前几个字节。
+    private String describeSliceObject(UnidbgPointer obj) {
+        if (obj == null) {
+            return "null";
+        }
+        try {
+            int alloc = obj.getInt(8);
+            int len = obj.getInt(12);
+            Pointer dataPtr = obj.getPointer(16);
+            UnidbgPointer data = UnidbgPointer.pointer(emulator, UnidbgPointer.nativeValue(dataPtr));
+            byte[] prefix = readBytes(data, Math.max(Math.min(len, 0x20), 0));
+            return String.format("obj=%s alloc=%d len=%d data=%s hex=%s",
+                    obj,
+                    alloc,
+                    len,
+                    data,
+                    Hex.encodeHexString(prefix));
+        } catch (Exception e) {
+            return obj + " <invalid slice object: " + e.getMessage() + ">";
+        }
+    }
+
+    // 返回 mssdk 字符串引用的长度，失败时返回 -1。
+    private int readMssdkStringRefLen(UnidbgPointer ref) {
+        if (ref == null) {
+            return -1;
+        }
+        try {
+            return ref.getInt(12);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    // 返回 mssdk 字符串引用的数据指针，失败时返回 null。
+    private UnidbgPointer readMssdkStringRefData(UnidbgPointer ref) {
+        if (ref == null) {
+            return null;
+        }
+        try {
+            Pointer dataPtr = ref.getPointer(16);
+            return UnidbgPointer.pointer(emulator, UnidbgPointer.nativeValue(dataPtr));
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -549,6 +914,72 @@ public class MainActivity {
     // 同时输出缓冲区的十六进制和文本，方便识别内容。
     private String describeSizedBuffer(UnidbgPointer data, int len) {
         return "hex=" + readSizedHex(data, len) + " text=" + readSizedUtf8(data, len);
+    }
+
+    // 读取指定长度的原始字节，失败时返回空数组。
+    private byte[] readBytes(UnidbgPointer data, int len) {
+        if (data == null || len <= 0) {
+            return new byte[0];
+        }
+        try {
+            return data.getByteArray(0, len);
+        } catch (Exception e) {
+            return new byte[0];
+        }
+    }
+
+    // 读取 mssdk 字符串引用前缀的原始字节。
+    private byte[] readMssdkRefPrefixBytes(UnidbgPointer ref, int len) {
+        return readBytes(readMssdkStringRefData(ref), len);
+    }
+
+    // 把某个栈槽位中保存的指针值读出来并转成 UnidbgPointer。
+    private UnidbgPointer readPointerSlot(long address) {
+        UnidbgPointer slot = UnidbgPointer.pointer(emulator, address);
+        if (slot == null) {
+            return null;
+        }
+        try {
+            return UnidbgPointer.pointer(emulator, UnidbgPointer.nativeValue(slot.getPointer(0)));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // 读取当前函数栈上的 16-bit 小端值。
+    private short readStackShort(int offset) {
+        UnidbgPointer sp = UnidbgPointer.pointer(emulator, emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_SP).longValue());
+        return sp == null ? 0 : sp.getShort(offset);
+    }
+
+    // 将字节数组格式化成易读的 0x?? 列表。
+    private String formatByteList(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder(bytes.length * 6);
+        for (int i = 0; i < bytes.length; i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            sb.append(String.format("0x%02x", bytes[i] & 0xff));
+        }
+        return sb.toString();
+    }
+
+    // 把连续字节按固定宽度切成多段十六进制，方便看 4 字节拼装过程。
+    private String formatHexChunks(byte[] bytes, int chunkSize) {
+        if (bytes == null || bytes.length == 0 || chunkSize <= 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder(bytes.length * 2 + bytes.length);
+        for (int i = 0; i < bytes.length; i++) {
+            if (i > 0 && i % chunkSize == 0) {
+                sb.append(" | ");
+            }
+            sb.append(String.format("%02x", bytes[i] & 0xff));
+        }
+        return sb.toString();
     }
 
     // 打印 src 附近几个候选起点，便于识别完整字符串真正从哪里开始。
