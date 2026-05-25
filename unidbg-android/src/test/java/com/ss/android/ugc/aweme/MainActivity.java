@@ -4,7 +4,9 @@ import com.github.unidbg.Emulator;
 import com.github.unidbg.Module;
 import com.github.unidbg.TraceHook;
 import com.github.unidbg.arm.Arm64Svc;
+import com.github.unidbg.arm.backend.Backend;
 import com.github.unidbg.arm.backend.BackendFactory;
+import com.github.unidbg.arm.backend.CodeHook;
 import com.github.unidbg.arm.backend.Unicorn2Factory;
 import com.github.unidbg.file.linux.AndroidFileIO;
 import com.github.unidbg.hook.hookzz.HookEntryInfo;
@@ -24,6 +26,7 @@ import com.github.unidbg.unix.UnixSyscallHandler;
 import com.github.unidbg.unwind.Unwinder;
 import com.sun.jna.Pointer;
 import capstone.api.Instruction;
+import org.apache.commons.codec.binary.Hex;
 import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -34,6 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import unicorn.Arm64Const;
 
 public class MainActivity {
 
@@ -56,10 +60,46 @@ public class MainActivity {
     private static final boolean REWRITE_REQUEST_TIME_FIELDS = true;
     // 是否全局监控指定 value 缓冲区的读写。
     private static final boolean ENABLE_GLOBAL_VALUE_TRACE = true;
+    // 是否打印全局 value 缓冲区的 read trace。
+    private static final boolean ENABLE_GLOBAL_VALUE_READ_TRACE = false;
+    // 是否打印全局 value 缓冲区的 write trace。
+    private static final boolean ENABLE_GLOBAL_VALUE_WRITE_TRACE = true;
+    // 是否监控最终 X-Gorgon 文本源缓冲区的写入。
+    private static final boolean ENABLE_GORGON_SOURCE_BUFFER_TRACE = true;
+    // 是否监控更早阶段暂存 X-Gorgon 值的内存区域写入。
+    private static final boolean ENABLE_EARLY_GORGON_VALUE_TRACE = true;
+    // 是否在执行到 sub_259154 时打印 *(arg2 + 8) 的源字符串。
+    private static final boolean ENABLE_STRING_COPY_HOOK = true;
+    // 是否在最终 memcpy 前直接打印 x1/src。
+    private static final boolean ENABLE_GORGON_MEMCPY_SOURCE_HOOK = true;
+    // 是否打印组件插入点的 key/value 文本。
+    private static final boolean ENABLE_LOG_COMPONENT_VALUES = true;
+    // 是否打印 X-Gorgon 的原生调用栈。
+    private static final boolean ENABLE_LOG_GORGON_CALLSTACK = true;
+    // 是否打印 sub_259154 里 *(arg2+8) 的细节。
+    private static final boolean ENABLE_LOG_STRING_COPY_DETAILS = true;
+    // 是否打印 memcpy 前后的源地址与内容。
+    private static final boolean ENABLE_LOG_GORGON_MEMCPY_ARGS = true;
+    // 是否打印 memcpy 源地址前后的候选窗口。
+    private static final boolean ENABLE_LOG_GORGON_SOURCE_CANDIDATES = true;
+    // 是否打印 sub_2b7724 插入前的 key/value 对象。
+    private static final boolean ENABLE_LOG_MAP_INSERT_DETAILS = true;
     // 需要全局监控的 value 缓冲区起始地址。
     private static final long GLOBAL_VALUE_TRACE_ADDRESS = 0x13104b00L;
     // 需要全局监控的 value 缓冲区长度。
     private static final int GLOBAL_VALUE_TRACE_SIZE = 0x35;
+    // 最终 X-Gorgon 文本源缓冲区起始地址。
+    private static final long GORGON_SOURCE_TRACE_ADDRESS = 0x13104b40L;
+    // 最终 X-Gorgon 文本源缓冲区长度。
+    private static final int GORGON_SOURCE_TRACE_SIZE = 0x35;
+    // 需要监控的早期 X-Gorgon 暂存地址列表。
+    private static final long[] EARLY_GORGON_VALUE_TRACE_ADDRESSES = {
+            0x130ed1a0L,
+            0x130ed260L,
+            0x130ed3e0L
+    };
+    // 每个早期暂存地址需要监控的长度。
+    private static final int EARLY_GORGON_VALUE_TRACE_SIZE = 0x4;
     // 测试 so 和输入文件所在目录。
     private static final File SO_DIR =
             new File("unidbg-android/src/test/java/com/ss/android/ugc/aweme");
@@ -79,6 +119,18 @@ public class MainActivity {
     private static final long METASEC_PREPARE_OFFSET = 0x27f9d4L;
     // 全局 dispatch 对象槽位地址偏移。
     private static final long METASEC_GLOBAL_DISPATCH_PTR_OFFSET = 0x58f6a0L;
+    // sub_259154：把 arg2+8 的字符串拷贝到新对象中。
+    private static final long METASEC_STRING_COPY_OFFSET = 0x259154L;
+    // sub_2590ec 内部，最终 memcpy 前读取 *(arg2 + 0x10) 的位置。
+    private static final long METASEC_GORGON_MEMCPY_SRC_OFFSET = 0x259130L;
+    // sub_2590ec 内部，真正调用 memcpy 前寄存器已准备好的位置。
+    private static final long METASEC_GORGON_MEMCPY_CALL_OFFSET = 0x25913cL;
+    // sub_2590ec 内部，从装载 src 到 memcpy 返回前的观测范围结束偏移。
+    private static final long METASEC_GORGON_MEMCPY_TRACE_END_OFFSET = 0x259140L;
+    // sub_2c6030 内部，调用 sub_2b7724 前 x1/x2 已准备好的位置。
+    private static final long METASEC_MAP_INSERT_PRECALL_OFFSET = 0x2c615cL;
+    // sub_2c6030 内部，真正调用 sub_2b7724 的位置。
+    private static final long METASEC_MAP_INSERT_CALL_OFFSET = 0x2c6160L;
     // 匹配 URL 中 _rticket 参数的正则。
     private static final Pattern RTICKET_PATTERN = Pattern.compile("([?&])_rticket=(\\d+)");
     // 匹配 URL 中 ts 参数的正则。
@@ -118,6 +170,9 @@ public class MainActivity {
         if (ENABLE_COMPONENT_HOOK) {
             installMetasecComponentHook(metasecModule);
         }
+        if (ENABLE_GORGON_MEMCPY_SOURCE_HOOK) {
+            installGorgonMemcpySourceHook(metasecModule);
+        }
         if (Open_break) {
             installBreakpoint();
         }
@@ -155,19 +210,118 @@ public class MainActivity {
                             trace.removeFirst();
                         }
                         trace.addLast(String.format("0x%x: %s", address, insn));
+                        long offset = address - metasecModule.base;
+                        if (ENABLE_STRING_COPY_HOOK && ENABLE_LOG_STRING_COPY_DETAILS && offset == METASEC_STRING_COPY_OFFSET) {
+                            UnidbgPointer arg1 = emulator.getContext().getPointerArg(0);
+                            UnidbgPointer arg2 = emulator.getContext().getPointerArg(1);
+                            if (arg2 == null) {
+                                System.out.printf("[metasec+0x%x] arg1=%s arg2=null%n", offset, arg1);
+                            } else {
+                                int len = arg2.getInt(4);
+                                Pointer srcPtr = arg2.getPointer(8);
+                                UnidbgPointer src = UnidbgPointer.pointer(emulator, UnidbgPointer.nativeValue(srcPtr));
+                                System.out.printf("[metasec+0x%x] arg1=%s arg2=%s len=%d *(arg2+8)=%s %s%n",
+                                        offset,
+                                        arg1,
+                                        arg2,
+                                        len,
+                                        src,
+                                        describeSizedBuffer(src, len));
+                            }
+                        }
+                        if (ENABLE_LOG_GORGON_MEMCPY_ARGS && offset == METASEC_GORGON_MEMCPY_SRC_OFFSET) {
+                            UnidbgPointer arg2Obj = UnidbgPointer.register(emulator, Arm64Const.UC_ARM64_REG_X20);
+                            if (arg2Obj == null) {
+                                System.out.printf("[metasec+0x%x] x20(arg2)=null%n", offset);
+                            } else {
+                                int len = arg2Obj.getInt(0xc);
+                                Pointer srcPtr = arg2Obj.getPointer(0x10);
+                                UnidbgPointer src = UnidbgPointer.pointer(emulator, UnidbgPointer.nativeValue(srcPtr));
+                                System.out.printf("[metasec+0x%x] x20(arg2)=%s *(arg2+0xc)=%d *(arg2+0x10)=%s %s%n",
+                                        offset,
+                                        arg2Obj,
+                                        len,
+                                        src,
+                                        describeSizedBuffer(src, len));
+                            }
+                        }
+                        if (ENABLE_LOG_GORGON_MEMCPY_ARGS && offset == METASEC_GORGON_MEMCPY_CALL_OFFSET) {
+                            UnidbgPointer src = UnidbgPointer.register(emulator, Arm64Const.UC_ARM64_REG_X1);
+                            long len = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X2).longValue();
+                            UnidbgPointer arg2Obj = UnidbgPointer.register(emulator, Arm64Const.UC_ARM64_REG_X20);
+                            System.out.printf("[metasec+0x%x] before memcpy x20(arg2)=%s x1(src)=%s x2(len)=%d %s%n",
+                                    offset,
+                                    arg2Obj,
+                                    src,
+                                    len,
+                                    describeSizedBuffer(src, (int) len));
+                        }
+                        if (ENABLE_LOG_MAP_INSERT_DETAILS &&
+                                (offset == METASEC_MAP_INSERT_PRECALL_OFFSET || offset == METASEC_MAP_INSERT_CALL_OFFSET)) {
+                            UnidbgPointer keyObj = emulator.getContext().getPointerArg(1);
+                            UnidbgPointer valueObj = emulator.getContext().getPointerArg(2);
+                            System.out.printf("[metasec+0x%x] before sub_2b7724 keyObj=%s valueObj=%s%n",
+                                    offset, keyObj, valueObj);
+                            System.out.println("  key   => " + describeMssdkStringRef(keyObj));
+                            System.out.println("  value => " + describeMssdkStringRef(valueObj));
+                        }
                     }
                 }
         );
         traceHook.setRedirect(DEV_NULL);
         TraceHook globalValueReadTrace = null;
         TraceHook globalValueWriteTrace = null;
+        TraceHook gorgonSourceWriteTrace = null;
+        List<TraceHook> earlyGorgonValueWriteTraces = new ArrayList<>();
+        final boolean[] gorgonMemcpyArgsPrinted = {false};
         if (ENABLE_GLOBAL_VALUE_TRACE) {
             long traceBegin = GLOBAL_VALUE_TRACE_ADDRESS;
             long traceEnd = GLOBAL_VALUE_TRACE_ADDRESS + GLOBAL_VALUE_TRACE_SIZE - 1L;
             System.out.printf("global value trace enabled: [0x%x, 0x%x] size=0x%x%n",
                     traceBegin, traceEnd, GLOBAL_VALUE_TRACE_SIZE);
-            globalValueReadTrace = emulator.traceRead(traceBegin, traceEnd);
-            globalValueWriteTrace = emulator.traceWrite(traceBegin, traceEnd);
+            if (ENABLE_GLOBAL_VALUE_READ_TRACE) {
+                globalValueReadTrace = emulator.traceRead(traceBegin, traceEnd);
+            }
+            if (ENABLE_GLOBAL_VALUE_WRITE_TRACE) {
+                globalValueWriteTrace = emulator.traceWrite(traceBegin, traceEnd, (emu, address, size, value) -> {
+                    if (ENABLE_LOG_GORGON_MEMCPY_ARGS && !gorgonMemcpyArgsPrinted[0]) {
+                    long lr = emu.getBackend().reg_read(Arm64Const.UC_ARM64_REG_LR).longValue();
+                    if (lr == metasecModule.base + 0x259140L) {
+                        UnidbgPointer dst = UnidbgPointer.pointer(emu, emu.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X0).longValue());
+                        UnidbgPointer src = UnidbgPointer.pointer(emu, emu.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X1).longValue());
+                        long len = emu.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X2).longValue();
+                        System.out.printf("[gorgon memcpy args] dst=%s src=%s len=%d %s%n",
+                                dst,
+                                src,
+                                len,
+                                describeSizedBuffer(src, (int) len));
+                        if (ENABLE_LOG_GORGON_SOURCE_CANDIDATES) {
+                            printBufferCandidatesAroundSource("  gorgon-src-candidate", src, (int) len);
+                        }
+                        gorgonMemcpyArgsPrinted[0] = true;
+                    }
+                }
+                return true;
+                });
+            }
+        }
+        if (ENABLE_GORGON_SOURCE_BUFFER_TRACE) {
+            long traceBegin = GORGON_SOURCE_TRACE_ADDRESS;
+            long traceEnd = GORGON_SOURCE_TRACE_ADDRESS + GORGON_SOURCE_TRACE_SIZE - 1L;
+            System.out.printf("gorgon source trace enabled: [0x%x, 0x%x] size=0x%x%n",
+                    traceBegin, traceEnd, GORGON_SOURCE_TRACE_SIZE);
+            gorgonSourceWriteTrace = emulator.traceWrite(traceBegin, traceEnd);
+        }
+        if (ENABLE_EARLY_GORGON_VALUE_TRACE && EARLY_GORGON_VALUE_TRACE_SIZE > 0) {
+            for (long traceBegin : EARLY_GORGON_VALUE_TRACE_ADDRESSES) {
+                if (traceBegin == 0) {
+                    continue;
+                }
+                long traceEnd = traceBegin + EARLY_GORGON_VALUE_TRACE_SIZE - 1L;
+                System.out.printf("early gorgon value trace enabled: [0x%x, 0x%x] size=0x%x%n",
+                        traceBegin, traceEnd, EARLY_GORGON_VALUE_TRACE_SIZE);
+                earlyGorgonValueWriteTraces.add(emulator.traceWrite(traceBegin, traceEnd));
+            }
         }
 
         dumpMetasecDispatchPtr("before prepare");
@@ -199,6 +353,12 @@ public class MainActivity {
             String result = pointer == null ? null : pointer.getString(0);
             System.out.println("direct-callback result=\n" + result);
         } finally {
+            for (TraceHook earlyTrace : earlyGorgonValueWriteTraces) {
+                earlyTrace.stopTrace();
+            }
+            if (gorgonSourceWriteTrace != null) {
+                gorgonSourceWriteTrace.stopTrace();
+            }
             if (globalValueReadTrace != null) {
                 globalValueReadTrace.stopTrace();
             }
@@ -223,9 +383,11 @@ public class MainActivity {
                 UnidbgPointer valueRef = ctx.getPointerArg(2);
                 String keyText = readMssdkStringRefText(keyRef);
                 System.out.printf("[metasec+0x%x] lr=%s mapCtx=%s%n", METASEC_COMPONENT_OFFSET, ctx.getLRPointer(), mapCtx);
-                System.out.println("  key   => " + describeMssdkStringRef(keyRef));
-                System.out.println("  value => " + describeMssdkStringRef(valueRef));
-                if (!gorgonCallstackPrinted && "X-GORGON".equalsIgnoreCase(keyText)) {
+                if (ENABLE_LOG_COMPONENT_VALUES) {
+                    System.out.println("  key   => " + describeMssdkStringRef(keyRef));
+                    System.out.println("  value => " + describeMssdkStringRef(valueRef));
+                }
+                if (ENABLE_LOG_GORGON_CALLSTACK && !gorgonCallstackPrinted && "X-GORGON".equalsIgnoreCase(keyText)) {
                     gorgonCallstackPrinted = true;
                     System.out.println("  X-Gorgon native callstack:");
                     dumpNativeCallstack(30);
@@ -233,6 +395,35 @@ public class MainActivity {
             }
         });
         hookZz.disable_arm_arm64_b_branch();
+    }
+
+    // 在 bl memcpy 前直接打印 x1/src，确认最终 X-Gorgon 文本源地址。
+    private void installGorgonMemcpySourceHook(Module module) {
+        long begin = module.base + METASEC_GORGON_MEMCPY_SRC_OFFSET;
+        long end = module.base + METASEC_GORGON_MEMCPY_TRACE_END_OFFSET;
+        emulator.getBackend().hook_add_new(new CodeHook() {
+            @Override
+            public void hook(Backend backend, long address, int size, Object user) {
+                UnidbgPointer src = UnidbgPointer.pointer(emulator, backend.reg_read(Arm64Const.UC_ARM64_REG_X1).longValue());
+                long len = backend.reg_read(Arm64Const.UC_ARM64_REG_X2).longValue();
+                UnidbgPointer arg2Obj = UnidbgPointer.pointer(emulator, backend.reg_read(Arm64Const.UC_ARM64_REG_X20).longValue());
+                long offset = address - metasecModule.base;
+                System.out.printf("[metasec+0x%x] hard-hook x20(arg2)=%s x1(src)=%s x2(len)=%d %s%n",
+                        offset,
+                        arg2Obj,
+                        src,
+                        len,
+                        describeSizedBuffer(src, (int) len));
+            }
+
+            @Override
+            public void onAttach(com.github.unidbg.arm.backend.UnHook unHook) {
+            }
+
+            @Override
+            public void detach() {
+            }
+        }, begin, end, emulator);
     }
 
     // 在目标偏移安装临时断点并打印 PC/LR/调用栈。
@@ -277,8 +468,8 @@ public class MainActivity {
             Pointer dataPtr = ref.getPointer(16);
             long dataPeer = UnidbgPointer.nativeValue(dataPtr);
             UnidbgPointer data = UnidbgPointer.pointer(emulator, dataPeer);
-            return String.format("ref=%s alloc=%d len=%d data=%s text=%s",
-                    ref, alloc, len, data, readSizedUtf8(data, len));
+            return String.format("ref=%s alloc=%d len=%d data=%s %s",
+                    ref, alloc, len, data, describeSizedBuffer(data, len));
         } catch (Exception e) {
             return "ref=" + ref + " <decode failed: " + e.getMessage() + ">";
         }
@@ -316,6 +507,44 @@ public class MainActivity {
         return new String(bytes, StandardCharsets.UTF_8)
                 .replace("\r", "\\r")
                 .replace("\n", "\\n");
+    }
+
+    // 按给定长度读取十六进制字符串，便于观察二进制缓冲区。
+    private String readSizedHex(UnidbgPointer data, int len) {
+        if (data == null) {
+            return "null";
+        }
+        if (len < 0) {
+            return "<neg-len:" + len + ">";
+        }
+        int size = Math.min(len, 0x200);
+        byte[] bytes = size == 0 ? new byte[0] : data.getByteArray(0, size);
+        return Hex.encodeHexString(bytes);
+    }
+
+    // 同时输出缓冲区的十六进制和文本，方便识别内容。
+    private String describeSizedBuffer(UnidbgPointer data, int len) {
+        return "hex=" + readSizedHex(data, len) + " text=" + readSizedUtf8(data, len);
+    }
+
+    // 打印 src 附近几个候选起点，便于识别完整字符串真正从哪里开始。
+    private void printBufferCandidatesAroundSource(String prefix, UnidbgPointer src, int len) {
+        if (src == null) {
+            return;
+        }
+        int[] deltas = { 0x40, 0x30, 0x20, 0x10, 0x00 };
+        for (int delta : deltas) {
+            long candidateAddr = src.peer - delta;
+            UnidbgPointer candidate = UnidbgPointer.pointer(emulator, candidateAddr);
+            if (candidate == null) {
+                continue;
+            }
+            System.out.printf("%s start=%s (src-0x%x) %s%n",
+                    prefix,
+                    candidate,
+                    delta,
+                    describeSizedBuffer(candidate, len));
+        }
     }
 
     // 从磁盘读取整个文本文件。
