@@ -1,22 +1,26 @@
 package com.ss.android.ugc.aweme;
 
-import com.github.unidbg.AndroidEmulator;
 import com.github.unidbg.Emulator;
 import com.github.unidbg.Module;
 import com.github.unidbg.TraceHook;
 import com.github.unidbg.arm.Arm64Svc;
+import com.github.unidbg.arm.backend.BackendFactory;
 import com.github.unidbg.arm.backend.Unicorn2Factory;
+import com.github.unidbg.file.linux.AndroidFileIO;
 import com.github.unidbg.hook.hookzz.HookEntryInfo;
 import com.github.unidbg.hook.hookzz.HookZz;
 import com.github.unidbg.hook.hookzz.HookZzArm64RegisterContext;
 import com.github.unidbg.hook.hookzz.IHookZz;
 import com.github.unidbg.hook.hookzz.WrapCallback;
 import com.github.unidbg.listener.TraceCodeListener;
-import com.github.unidbg.linux.android.AndroidEmulatorBuilder;
+import com.github.unidbg.linux.ARM64SyscallHandler;
+import com.github.unidbg.linux.android.AndroidARM64Emulator;
 import com.github.unidbg.linux.android.AndroidResolver;
 import com.github.unidbg.memory.Memory;
 import com.github.unidbg.memory.MemoryBlock;
+import com.github.unidbg.memory.SvcMemory;
 import com.github.unidbg.pointer.UnidbgPointer;
+import com.github.unidbg.unix.UnixSyscallHandler;
 import com.github.unidbg.unwind.Unwinder;
 import com.sun.jna.Pointer;
 import capstone.api.Instruction;
@@ -28,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity {
 
@@ -37,7 +43,10 @@ public class MainActivity {
         }
     });
     private static final boolean ENABLE_COMPONENT_HOOK = true ;
-    private static final boolean Open_break = true;
+    private static final boolean Open_break = false;
+    private static final Long FIXED_TIME_MILLIS = 1779160424642l;
+    private static final boolean AUTO_FIX_TIME_FROM_REQUEST = true;
+    private static final boolean REWRITE_REQUEST_TIME_FIELDS = true;
     private static final File SO_DIR =
             new File("unidbg-android/src/test/java/com/ss/android/ugc/aweme");
     private static final File CALLBACK_URL_FILE =
@@ -49,6 +58,8 @@ public class MainActivity {
     private static final long Break_offset = 0x2ce7fc;
     private static final long METASEC_PREPARE_OFFSET = 0x27f9d4L;
     private static final long METASEC_GLOBAL_DISPATCH_PTR_OFFSET = 0x58f6a0L;
+    private static final Pattern RTICKET_PATTERN = Pattern.compile("([?&])_rticket=(\\d+)");
+    private static final Pattern TS_PATTERN = Pattern.compile("([?&])ts=(\\d+)");
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
         MainActivity mainActivity = new MainActivity();
@@ -56,15 +67,15 @@ public class MainActivity {
         mainActivity.testDirectMetasecCallback();
     }
 
-    private final AndroidEmulator emulator;
+    private final FixedClockAndroidARM64Emulator emulator;
     private final Module metasecModule;
     private final List<MemoryBlock> manualBlocks = new ArrayList<>();
     private boolean gorgonCallstackPrinted;
 
     private MainActivity() {
-        emulator = AndroidEmulatorBuilder.for64Bit()
-                .addBackendFactory(new Unicorn2Factory(true))
-                .build();
+        List<BackendFactory> backendFactories = new ArrayList<>();
+        backendFactories.add(new Unicorn2Factory(true));
+        emulator = new FixedClockAndroidARM64Emulator(null, null, backendFactories);
         Memory memory = emulator.getMemory();
         memory.setLibraryResolver(new AndroidResolver(23));
 
@@ -92,6 +103,15 @@ public class MainActivity {
     private void testDirectMetasecCallback() {
         String url = loadText(CALLBACK_URL_FILE).trim();
         String headerBlob = decodeEscapedCrlf(loadText(CALLBACK_HEADERS_FILE).trim());
+        Long fixedTimeMillis = resolveFixedTimeMillis(url, headerBlob);
+        if (fixedTimeMillis != null) {
+            emulator.getFixedClockSyscallHandler().setFixedTimeMillis(fixedTimeMillis);
+            if (REWRITE_REQUEST_TIME_FIELDS) {
+                url = rewriteRequestTimeFields(url, fixedTimeMillis);
+                headerBlob = rewriteHeaderTimeFields(headerBlob, fixedTimeMillis);
+            }
+            System.out.printf("fixed timestamp enabled: %d (sec=%d)%n", fixedTimeMillis, fixedTimeMillis / 1000L);
+        }
         ArrayDeque<String> trace = new ArrayDeque<>();
         TraceHook traceHook = emulator.traceCode(
                 metasecModule.base,
@@ -253,6 +273,77 @@ public class MainActivity {
 
     private String decodeEscapedCrlf(String text) {
         return text.replace("\\r\\n", "\r\n");
+    }
+
+    private Long resolveFixedTimeMillis(String url, String headerBlob) {
+        if (FIXED_TIME_MILLIS != null) {
+            return FIXED_TIME_MILLIS;
+        }
+        if (!AUTO_FIX_TIME_FROM_REQUEST) {
+            return null;
+        }
+
+        Long value = extractQueryParamAsLong(url, RTICKET_PATTERN);
+        if (value != null) {
+            return value;
+        }
+        value = extractHeaderValueAsLong(headerBlob, "x-ss-req-ticket");
+        if (value != null) {
+            return value;
+        }
+        value = extractHeaderValueAsLong(headerBlob, "activity_now_client");
+        if (value != null) {
+            return value;
+        }
+        value = extractQueryParamAsLong(url, TS_PATTERN);
+        return value == null ? null : value * 1000L;
+    }
+
+    private Long extractQueryParamAsLong(String url, Pattern pattern) {
+        Matcher matcher = pattern.matcher(url);
+        if (!matcher.find()) {
+            return null;
+        }
+        return Long.parseLong(matcher.group(2));
+    }
+
+    private Long extractHeaderValueAsLong(String headerBlob, String key) {
+        String[] lines = headerBlob.split("\\r?\\n");
+        for (int i = 0; i + 1 < lines.length; i += 2) {
+            if (key.equalsIgnoreCase(lines[i].trim())) {
+                try {
+                    return Long.parseLong(lines[i + 1].trim());
+                } catch (NumberFormatException ignored) {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    private String rewriteRequestTimeFields(String url, long fixedTimeMillis) {
+        String updated = replaceQueryLongParam(url, RTICKET_PATTERN, "_rticket", fixedTimeMillis);
+        return replaceQueryLongParam(updated, TS_PATTERN, "ts", fixedTimeMillis / 1000L);
+    }
+
+    private String replaceQueryLongParam(String text, Pattern pattern, String key, long value) {
+        Matcher matcher = pattern.matcher(text);
+        if (!matcher.find()) {
+            return text;
+        }
+        return matcher.replaceAll("$1" + key + "=" + value);
+    }
+
+    private String rewriteHeaderTimeFields(String headerBlob, long fixedTimeMillis) {
+        String separator = headerBlob.contains("\r\n") ? "\r\n" : "\n";
+        String[] lines = headerBlob.split("\\r?\\n", -1);
+        for (int i = 0; i + 1 < lines.length; i += 2) {
+            String key = lines[i].trim();
+            if ("x-ss-req-ticket".equalsIgnoreCase(key) || "activity_now_client".equalsIgnoreCase(key)) {
+                lines[i + 1] = Long.toString(fixedTimeMillis);
+            }
+        }
+        return String.join(separator, lines);
     }
 
     private void installManualMetasecDispatchStub() {
@@ -463,6 +554,44 @@ public class MainActivity {
         System.out.println("direct-callback trace tail:");
         for (String line : trace) {
             System.out.println("  " + line);
+        }
+    }
+
+    private static final class FixedClockAndroidARM64Emulator extends AndroidARM64Emulator {
+
+        private FixedClockARM64SyscallHandler fixedClockSyscallHandler;
+
+        private FixedClockAndroidARM64Emulator(String processName, File rootDir, List<BackendFactory> backendFactories) {
+            super(processName, rootDir, backendFactories);
+        }
+
+        @Override
+        protected UnixSyscallHandler<AndroidFileIO> createSyscallHandler(SvcMemory svcMemory) {
+            fixedClockSyscallHandler = new FixedClockARM64SyscallHandler(svcMemory);
+            return fixedClockSyscallHandler;
+        }
+
+        private FixedClockARM64SyscallHandler getFixedClockSyscallHandler() {
+            return fixedClockSyscallHandler;
+        }
+    }
+
+    private static final class FixedClockARM64SyscallHandler extends ARM64SyscallHandler {
+
+        private volatile Long fixedTimeMillis;
+
+        private FixedClockARM64SyscallHandler(SvcMemory svcMemory) {
+            super(svcMemory);
+        }
+
+        private void setFixedTimeMillis(Long fixedTimeMillis) {
+            this.fixedTimeMillis = fixedTimeMillis;
+        }
+
+        @Override
+        protected long currentTimeMillis() {
+            Long value = fixedTimeMillis;
+            return value != null ? value : super.currentTimeMillis();
         }
     }
 }
