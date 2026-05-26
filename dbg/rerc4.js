@@ -1,3 +1,4 @@
+//sub_2c20d4
 const crypto = require("crypto");
 
 function normalizeHex(hex) {
