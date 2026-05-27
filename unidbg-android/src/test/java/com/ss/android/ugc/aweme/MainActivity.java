@@ -148,6 +148,8 @@ public class MainActivity {
     private static final long METASEC_VM_COPY_SLOT3_PRELOAD_OFFSET = 0x2d7104L;
     // add 类 handler：在真正解引用源指针前，dst slot、源指针和 addend 都还可见。
     private static final long METASEC_VM_ADD_PTR_IMM_TO_SLOT_PRELOAD_OFFSET = 0x2d1ba4L;
+    // xor64 类 handler：在真正 load 源 slot 前，srcA/srcB/dst 三个 slot 号都已就位。
+    private static final long METASEC_VM_XOR64_TO_SLOT_PRELOAD_OFFSET = 0x2d15e8L;
     // 通用 VM 槽位写 helper：arg1->slots[arg2] = arg3。
     private static final long METASEC_VM_WRITE_SLOT_HELPER_OFFSET = 0x2cb884L;
     // VM handler 大致落在这段代码区，语义写回只在这里做 operand 级过滤。
@@ -451,6 +453,28 @@ public class MainActivity {
                                     if (srcHolder != null) {
                                         System.out.println("  srcHolder => " + describeSizedBuffer(srcHolder, 8));
                                     }
+                                }
+                            }
+                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_VM_XOR64_TO_SLOT_PRELOAD_OFFSET) {
+                                int srcSlotA = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W9).intValue();
+                                int srcSlotB = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W10).intValue();
+                                int dstSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W12).intValue();
+                                if (dstSlot == LADON_VM_SOURCE_SLOT || dstSlot == LADON_VM_GLOBAL_SOURCE_SLOT) {
+                                    long slotBaseValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X24).longValue();
+                                    UnidbgPointer slotBase = UnidbgPointer.pointer(emulator, slotBaseValue);
+                                    long srcValueA = slotBase == null ? 0L : slotBase.getLong((long) srcSlotA * METASEC_VM_SLOT_STRIDE);
+                                    long srcValueB = slotBase == null ? 0L : slotBase.getLong((long) srcSlotB * METASEC_VM_SLOT_STRIDE);
+                                    long result = srcValueA ^ srcValueB;
+                                    System.out.printf("[metasec+0x%x] vm-xor64-to-slot slotBase=%s srcSlotA=%d srcValueA=0x%x srcSlotB=%d srcValueB=0x%x dstSlot=%d result=0x%x dstCell=0x%x%n",
+                                            offset,
+                                            slotBase,
+                                            srcSlotA,
+                                            srcValueA,
+                                            srcSlotB,
+                                            srcValueB,
+                                            dstSlot,
+                                            result,
+                                            slotBaseValue + (long) dstSlot * METASEC_VM_SLOT_STRIDE);
                                 }
                             }
                             if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_VM_LSL32_TO_SLOT_LOAD_OFFSET) {
