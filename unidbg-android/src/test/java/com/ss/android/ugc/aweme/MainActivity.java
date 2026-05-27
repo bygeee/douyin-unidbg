@@ -23,7 +23,12 @@ import com.github.unidbg.pointer.UnidbgPointer;
 import com.github.unidbg.unix.UnixSyscallHandler;
 import com.github.unidbg.unwind.Unwinder;
 import com.sun.jna.Pointer;
+import capstone.Arm64_const;
 import capstone.api.Instruction;
+import capstone.api.OpShift;
+import capstone.api.arm64.MemType;
+import capstone.api.arm64.OpInfo;
+import capstone.api.arm64.Operand;
 import org.apache.commons.codec.binary.Hex;
 import unicorn.Arm64Const;
 import java.io.File;
@@ -75,8 +80,24 @@ public class MainActivity {
     private static final boolean ENABLE_LADON_ARG4_TRACE = true;
     // 是否监控这次运行里 X-Ladon memcpy 源地址的写入。
     private static final boolean ENABLE_LADON_SRC_TRACE = true;
-    // 是否在 VM 初始化后监控承载源值的 slot[5] 单元写入。
-    private static final boolean ENABLE_LADON_VM_SRC_SLOT_TRACE = true;
+    // 是否监控 slot[122] 单元的写入。
+    private static final boolean ENABLE_LADON_STAGE0_TRACE = true;
+    // 是否监控 slot[122] 单元的 system write。
+    private static final boolean ENABLE_LADON_STAGE0_SYSTEM_WRITE_TRACE = true;
+    // 是否打印命中 slot[122] 的 VM 语义写回，避免只看到原始 traceWrite 噪音。
+    private static final boolean ENABLE_LADON_STAGE0_VM_SLOT_LOG = true;
+    // 是否监控 slot[5] 单元的 system write。
+    private static final boolean ENABLE_LADON_SRC_SYSTEM_WRITE_TRACE = true;
+    // 是否监控 slot[6] 单元的写入。
+    private static final boolean ENABLE_LADON_SRC_SOURCE_TRACE = true;
+    // 是否监控 slot[6] 单元的 system write。
+    private static final boolean ENABLE_LADON_SRC_SOURCE_SYSTEM_WRITE_TRACE = true;
+    // 是否监控 slot[9] 单元的写入。
+    private static final boolean ENABLE_LADON_SLOT9_TRACE = true;
+    // 是否监控 slot[9] 单元的 system write。
+    private static final boolean ENABLE_LADON_SLOT9_SYSTEM_WRITE_TRACE = true;
+    // 是否监控 slot[6] 上游全局 32 位来源地址的写入。
+    private static final boolean ENABLE_LADON_GLOBAL_WORD_TRACE = true;
     // 是否监控当前运行时 X-Ladon value 缓冲区的 system write。
     private static final boolean ENABLE_LADON_SYSTEM_WRITE_TRACE = true;
     // 测试 so 和输入文件所在目录。
@@ -101,10 +122,37 @@ public class MainActivity {
     private static final long METASEC_BUFFER_MEMCPY_PRECALL_OFFSET = 0x258f60L;
     // sub_258f08 内部 memcpy 返回后的现场。
     private static final long METASEC_BUFFER_MEMCPY_POSTCALL_OFFSET = 0x258f64L;
-    // VM 主循环里 slots 基址已经准备好的位置。
-    private static final long METASEC_VM_SLOT_BASE_READY_OFFSET = 0x2ce810L;
+    // VM 指令：x10 已从 slot[src] 载入，但 x12 还没被 opcode selector 覆盖。
+    private static final long METASEC_VM_LSL32_TO_SLOT_LOAD_OFFSET = 0x2cf174L;
+    // VM 指令：执行 lsl w10, w10, w11 前，x12 已经变成 opcode selector。
+    private static final long METASEC_VM_LSL32_TO_SLOT_SHIFT_OFFSET = 0x2cf178L;
+    // VM 指令：slot[dst] = signext32(rev16(slot[src]))。
+    private static final long METASEC_VM_REV16_TO_SLOT_PRE_OFFSET = 0x2d0f58L;
+    // VM 指令：slot[dst] = ror32(slot[src], rot)。
+    private static final long METASEC_VM_ROR32_TO_SLOT_PRE_OFFSET = 0x2cea04L;
     // VM 指令：把 slot[src] 的低 32 位写到 slot[dst] + off。
     private static final long METASEC_VM_STORE32_OFFSET = 0x2cead4L;
+    // slot[6] 上游：调用 sub_29fb98 前，x0 里还留着 slot[8]。
+    private static final long METASEC_LADON_SLOT6_SOURCE_PRECALL_OFFSET = 0x2be454L;
+    // slot[6] 上游：sub_29fb98 返回后，w0 就是准备写入 slot[6] 的值。
+    private static final long METASEC_LADON_SLOT6_SOURCE_POSTCALL_OFFSET = 0x2be458L;
+    // 全局字 setter：调用 sub_291e3c 前，x0=slot[8]，x1=slot[9]。
+    private static final long METASEC_LADON_GLOBAL_SET_PRECALL_OFFSET = 0x2be434L;
+    // sub_29fb98 返回 sub_4cff50 后，x0 是真实全局字地址，下一条会 ldr w0, [x0]。
+    private static final long METASEC_LADON_GLOBAL_WORD_LOAD_OFFSET = 0x29fbacL;
+    // 通用 slot copy：在真正 load 源 slot 之前，源/目标 slot 号都还保留在寄存器里。
+    private static final long METASEC_VM_COPY_SLOT_PRELOAD_OFFSET = 0x2d0118L;
+    // 复合 helper 的第二段 slot copy：在 load 源 slot 前记录 src/dst。
+    private static final long METASEC_VM_COPY_SLOT2_PRELOAD_OFFSET = 0x2d70b8L;
+    // 复合 helper 的第三段 slot copy：在 load 源 slot 前记录 src/dst。
+    private static final long METASEC_VM_COPY_SLOT3_PRELOAD_OFFSET = 0x2d7104L;
+    // add 类 handler：在真正解引用源指针前，dst slot、源指针和 addend 都还可见。
+    private static final long METASEC_VM_ADD_PTR_IMM_TO_SLOT_PRELOAD_OFFSET = 0x2d1ba4L;
+    // 通用 VM 槽位写 helper：arg1->slots[arg2] = arg3。
+    private static final long METASEC_VM_WRITE_SLOT_HELPER_OFFSET = 0x2cb884L;
+    // VM handler 大致落在这段代码区，语义写回只在这里做 operand 级过滤。
+    private static final long METASEC_VM_SLOT_WRITE_SCAN_BEGIN = 0x2ce000L;
+    private static final long METASEC_VM_SLOT_WRITE_SCAN_END = 0x310000L;
     // X-Ladon 路径里真正调用 base64 前的现场。
     private static final long METASEC_LADON_BASE64_CALL_OFFSET = 0x269dd8L;
     // direct-callback 失败时封装错误对象的函数入口。
@@ -127,14 +175,36 @@ public class MainActivity {
     private static final long LADON_ARG4_TRACE_ADDRESS = 0x12357410L;
     // 当前样本中 arg4 为 4 字节。
     private static final int LADON_ARG4_TRACE_SIZE = 0x4;
-    // 这次运行中 memcpy 源数据地址。
-    private static final long LADON_SRC_TRACE_ADDRESS = 0xe4ff7998L;
-    // 当前样本中源数据仍为 4 字节。
-    private static final int LADON_SRC_TRACE_SIZE = 0x4;
-    // 产生该值的 VM 源槽位编号。
-    private static final int LADON_VM_SOURCE_SLOT_INDEX = 5;
-    // 一个 VM slot 单元占 8 字节。
-    private static final int LADON_VM_SLOT_CELL_SIZE = 0x8;
+    // VM store32 最终把值写入的源缓冲区地址。
+    private static final long LADON_VM_STORE_DST_ADDRESS = 0xe4ff7998L;
+    // 这次运行中 slot[122] 单元地址。
+    private static final long LADON_STAGE0_TRACE_ADDRESS = 0xe4ff7f60L;
+    // slot[122] 单元占 8 字节。
+    private static final int LADON_STAGE0_TRACE_SIZE = 0x8;
+    // stage0 上游可能通过相邻 slot 的宽写覆盖进来，固定地址 trace 向前后各放宽一小段。
+    private static final int LADON_STAGE0_TRACE_PAD = 0x20;
+    // X-Ladon 上游中间值的语义槽号。
+    private static final int LADON_STAGE0_SLOT_INDEX = 122;
+    // 这次运行中 slot[5] 单元地址。
+    private static final long LADON_SRC_TRACE_ADDRESS = 0xe4ff7bb8L;
+    // slot[5] 单元占 8 字节。
+    private static final int LADON_SRC_TRACE_SIZE = 0x8;
+    // 当前样本里 X-Ladon 的 VM 中间值落在 slot[5]。
+    private static final int LADON_VM_RESULT_SLOT = 5;
+    // 这次运行中 slot[6] 单元地址，是 Ladon 变换前的真实源槽位。
+    private static final long LADON_SRC_SOURCE_TRACE_ADDRESS = 0xe4ff7bc0L;
+    // slot[6] 单元占 8 字节。
+    private static final int LADON_SRC_SOURCE_TRACE_SIZE = 0x8;
+    // 当前样本里 X-Ladon 变换前的真实源槽号。
+    private static final int LADON_VM_SOURCE_SLOT = 6;
+    // slot[9] 是写入全局字前的直接来源槽。
+    private static final long LADON_SLOT9_TRACE_ADDRESS = 0xe4ff7bd8L;
+    private static final int LADON_SLOT9_TRACE_SIZE = 0x8;
+    private static final int LADON_VM_GLOBAL_SOURCE_SLOT = 9;
+    // slot[6] 上游全局字只读取 4 字节。
+    private static final int LADON_GLOBAL_WORD_TRACE_SIZE = 0x4;
+    // VM 槽位按 8 字节对齐排列。
+    private static final int METASEC_VM_SLOT_STRIDE = 0x8;
     // 为了抓对齐写，固定向前后各扩 0x20。
     private static final int LADON_VALUE_TRACE_PAD = 0x20;
     // 匹配 URL 中 _rticket 参数的正则。
@@ -162,16 +232,22 @@ public class MainActivity {
     private TraceHook ladonValueWriteTrace;
     // 固定地址的 X-Ladon arg4 写监控 hook。
     private TraceHook ladonArg4WriteTrace;
+    // 固定地址的 slot[122] 写监控 hook。
+    private TraceHook ladonStage0WriteTrace;
     // 固定地址的 X-Ladon memcpy 源写监控 hook。
     private TraceHook ladonSrcWriteTrace;
-    // 动态计算得到的 VM slot[5] 写监控 hook。
-    private TraceHook ladonVmSrcSlotWriteTrace;
+    // 固定地址的 X-Ladon 真实源槽 slot[6] 写监控 hook。
+    private TraceHook ladonSrcSourceWriteTrace;
+    // 固定地址的 slot[9] 写监控 hook。
+    private TraceHook ladonSlot9WriteTrace;
+    // 动态解析出的 slot[6] 上游全局字写监控 hook。
+    private TraceHook ladonGlobalWordWriteTrace;
     // 当前正在监控的 mapCtx 起始地址。
     private long mapCtxTraceBase;
     // 当前正在监控的 mapCtx 区域长度。
     private int mapCtxTraceSize;
-    // 当前正在监控的 VM slot[5] 地址。
-    private long ladonVmSrcSlotTraceAddress;
+    // 当前正在监控的 slot[6] 上游全局字地址。
+    private long ladonGlobalWordTraceBase;
 
     // 构造模拟器、依赖库和 metasec 主模块。
     private MainActivity() {
@@ -281,10 +357,194 @@ public class MainActivity {
                                     System.out.println("  src => " + describeSizedBuffer(src, len));
                                 }
                             }
-                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_VM_SLOT_BASE_READY_OFFSET) {
+                            maybeLogStage0VmSlotWrite(emulator, offset, insn);
+                            maybeLogLadonSlot9VmWrite(emulator, offset, insn);
+                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_VM_WRITE_SLOT_HELPER_OFFSET) {
+                                long ctxValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X0).longValue();
+                                int slot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W1).intValue();
+                                long value = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X2).longValue();
+                                long lrValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X30).longValue();
+                                long dstCell = ctxValue + 0x6070L + (long) slot * METASEC_VM_SLOT_STRIDE;
+                                if (slot == LADON_STAGE0_SLOT_INDEX ||
+                                        slot == LADON_VM_SOURCE_SLOT ||
+                                        slot == LADON_VM_GLOBAL_SOURCE_SLOT ||
+                                        dstCell == LADON_STAGE0_TRACE_ADDRESS ||
+                                        dstCell == LADON_SRC_SOURCE_TRACE_ADDRESS ||
+                                        dstCell == LADON_SLOT9_TRACE_ADDRESS) {
+                                    String caller = (lrValue >= metasecModule.base && lrValue < metasecModule.base + metasecModule.size)
+                                            ? String.format("RX@0x%x[libmetasec_ml.so]0x%x", lrValue, lrValue - metasecModule.base)
+                                            : String.format("0x%x", lrValue);
+                                    UnidbgPointer dstPtr = UnidbgPointer.pointer(emulator, dstCell);
+                                    System.out.printf("[metasec+0x%x] vm-write-slot-helper ctx=0x%x slot=%d dstCell=0x%x value=0x%x lr=%s%n",
+                                            offset,
+                                            ctxValue,
+                                            slot,
+                                            dstCell,
+                                            value,
+                                            caller);
+                                    if (dstPtr != null) {
+                                        System.out.println("  dst(before) => " + describeSizedBuffer(dstPtr, METASEC_VM_SLOT_STRIDE));
+                                    }
+                                }
+                            }
+                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_LADON_SLOT6_SOURCE_PRECALL_OFFSET) {
+                                long ctxValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X19).longValue();
+                                long slot8Value = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X0).longValue();
+                                System.out.printf("[metasec+0x%x] ladon-slot6-precall ctx=0x%x slot8Value=0x%x call=sub_29fb98%n",
+                                        offset, ctxValue, slot8Value);
+                            }
+                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_LADON_GLOBAL_SET_PRECALL_OFFSET) {
+                                long ctxValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X19).longValue();
+                                long slot8Value = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X0).longValue();
+                                long slot9Value = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X1).longValue();
+                                System.out.printf("[metasec+0x%x] ladon-global-set-precall ctx=0x%x slot8Value=0x%x slot9Value=0x%x call=sub_291e3c%n",
+                                        offset, ctxValue, slot8Value, slot9Value);
+                            }
+                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_LADON_SLOT6_SOURCE_POSTCALL_OFFSET) {
+                                long ctxValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X19).longValue();
+                                long retValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X0).longValue();
+                                System.out.printf("[metasec+0x%x] ladon-slot6-postcall ctx=0x%x ret32=0x%x%n",
+                                        offset, ctxValue, retValue & 0xffffffffL);
+                            }
+                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_LADON_GLOBAL_WORD_LOAD_OFFSET) {
+                                long globalPtrValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X0).longValue();
+                                UnidbgPointer globalPtr = UnidbgPointer.pointer(emulator, globalPtrValue);
+                                ensureLadonGlobalWordWriteTrace(globalPtr);
+                                long raw32 = safeReadInt(globalPtr, 0) & 0xffffffffL;
+                                System.out.printf("[metasec+0x%x] ladon-global-word-load ptr=%s raw32=0x%x%n",
+                                        offset, globalPtr, raw32);
+                            }
+                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_VM_COPY_SLOT_PRELOAD_OFFSET) {
+                                int srcSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W9).intValue();
+                                int dstSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W11).intValue();
+                                logLadonSlotCopyPreload(emulator, offset, "vm-copy-slot", srcSlot, dstSlot);
+                            }
+                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_VM_COPY_SLOT2_PRELOAD_OFFSET) {
+                                int srcSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W9).intValue();
+                                int dstSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W10).intValue();
+                                logLadonSlotCopyPreload(emulator, offset, "vm-copy-slot2", srcSlot, dstSlot);
+                            }
+                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_VM_COPY_SLOT3_PRELOAD_OFFSET) {
+                                int srcSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W10).intValue();
+                                int dstSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W9).intValue();
+                                logLadonSlotCopyPreload(emulator, offset, "vm-copy-slot3", srcSlot, dstSlot);
+                            }
+                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_VM_ADD_PTR_IMM_TO_SLOT_PRELOAD_OFFSET) {
+                                int dstSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W13).intValue();
+                                if (dstSlot == LADON_VM_GLOBAL_SOURCE_SLOT) {
+                                    long srcHolderValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X10).longValue();
+                                    long addend = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X11).longValue();
+                                    long slotBaseValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X24).longValue();
+                                    UnidbgPointer slotBase = UnidbgPointer.pointer(emulator, slotBaseValue);
+                                    UnidbgPointer srcHolder = UnidbgPointer.pointer(emulator, srcHolderValue);
+                                    long loaded = srcHolder == null ? 0L : srcHolder.getLong(0);
+                                    long result = loaded + addend;
+                                    System.out.printf("[metasec+0x%x] vm-add-ptr-imm-to-slot dstSlot=%d slotBase=%s srcHolder=%s loaded=0x%x addend=0x%x result=0x%x dstCell=0x%x%n",
+                                            offset,
+                                            dstSlot,
+                                            slotBase,
+                                            srcHolder,
+                                            loaded,
+                                            addend,
+                                            result,
+                                            LADON_SLOT9_TRACE_ADDRESS);
+                                    if (srcHolder != null) {
+                                        System.out.println("  srcHolder => " + describeSizedBuffer(srcHolder, 8));
+                                    }
+                                }
+                            }
+                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_VM_LSL32_TO_SLOT_LOAD_OFFSET) {
+                                int srcSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W12).intValue();
+                                int dstSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W9).intValue();
+                                int shift = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W11).intValue() & 31;
+                                long srcRaw = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X10).longValue();
                                 long slotBaseValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X24).longValue();
                                 UnidbgPointer slotBase = UnidbgPointer.pointer(emulator, slotBaseValue);
-                                ensureLadonVmSrcSlotTrace(slotBase);
+                                long dstCell = slotBaseValue + (long) dstSlot * 8L;
+                                long srcCell = slotBaseValue + (long) srcSlot * 8L;
+                                if (dstSlot == LADON_VM_RESULT_SLOT && dstCell == LADON_SRC_TRACE_ADDRESS) {
+                                    long slotMemRaw = slotBase == null ? 0L : slotBase.getLong((long) srcSlot * 8L);
+                                    int src32 = (int) srcRaw;
+                                    int result32 = src32 << shift;
+                                    System.out.printf("[metasec+0x%x] vm-lsl32-load slotBase=%s srcSlot=%d srcCell=0x%x slotMemRaw=0x%x x10Loaded=0x%x dstSlot=%d shift=%d src32=0x%x result32=0x%x dstCell=0x%x%n",
+                                            offset,
+                                            slotBase,
+                                            srcSlot,
+                                            srcCell,
+                                            slotMemRaw,
+                                            srcRaw,
+                                            dstSlot,
+                                            shift,
+                                            src32,
+                                            result32,
+                                            dstCell);
+                                }
+                            }
+                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_VM_LSL32_TO_SLOT_SHIFT_OFFSET) {
+                                int dstSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W9).intValue();
+                                int shift = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W11).intValue() & 31;
+                                long slotBaseValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X24).longValue();
+                                long dstCell = slotBaseValue + (long) dstSlot * 8L;
+                                if (dstSlot == LADON_VM_RESULT_SLOT && dstCell == LADON_SRC_TRACE_ADDRESS) {
+                                    long opcodeSelector = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X12).longValue();
+                                    long srcRaw = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X10).longValue();
+                                    int src32 = (int) srcRaw;
+                                    int result32 = src32 << shift;
+                                    System.out.printf("[metasec+0x%x] vm-lsl32-shift opcodeSel=0x%x dstSlot=%d shift=%d srcRaw=0x%x src32=0x%x result32=0x%x dstCell=0x%x%n",
+                                            offset,
+                                            opcodeSelector,
+                                            dstSlot,
+                                            shift,
+                                            srcRaw,
+                                            src32,
+                                            result32,
+                                            dstCell);
+                                }
+                            }
+                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_VM_REV16_TO_SLOT_PRE_OFFSET) {
+                                int srcSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W9).intValue();
+                                int dstSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W10).intValue();
+                                long slotBaseValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X24).longValue();
+                                UnidbgPointer slotBase = UnidbgPointer.pointer(emulator, slotBaseValue);
+                                long dstCell = slotBaseValue + (long) dstSlot * 8L;
+                                if (dstSlot == LADON_VM_RESULT_SLOT && dstCell == LADON_SRC_TRACE_ADDRESS && slotBase != null) {
+                                    long srcRaw = slotBase.getLong((long) srcSlot * 8L);
+                                    int src32 = (int) srcRaw;
+                                    int result32 = Integer.reverseBytes(src32) >>> 16 | (Integer.reverseBytes(src32) << 16);
+                                    result32 = (((src32 & 0x00ff00ff) << 8) | ((src32 & 0xff00ff00) >>> 8));
+                                    System.out.printf("[metasec+0x%x] vm-rev16-to-slot slotBase=%s srcSlot=%d dstSlot=%d srcRaw=0x%x src32=0x%x result32=0x%x dstCell=0x%x%n",
+                                            offset,
+                                            slotBase,
+                                            srcSlot,
+                                            dstSlot,
+                                            srcRaw,
+                                            src32,
+                                            result32,
+                                            dstCell);
+                                }
+                            }
+                            if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_VM_ROR32_TO_SLOT_PRE_OFFSET) {
+                                int srcSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W8).intValue();
+                                int dstSlot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W10).intValue();
+                                int rot = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_W12).intValue() & 31;
+                                long slotBaseValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X24).longValue();
+                                UnidbgPointer slotBase = UnidbgPointer.pointer(emulator, slotBaseValue);
+                                long dstCell = slotBaseValue + (long) dstSlot * 8L;
+                                if (dstSlot == LADON_VM_RESULT_SLOT && dstCell == LADON_SRC_TRACE_ADDRESS && slotBase != null) {
+                                    long srcRaw = slotBase.getLong((long) srcSlot * 8L);
+                                    int src32 = (int) srcRaw;
+                                    int result32 = Integer.rotateRight(src32, rot);
+                                    System.out.printf("[metasec+0x%x] vm-ror32-to-slot slotBase=%s srcSlot=%d dstSlot=%d rot=%d srcRaw=0x%x src32=0x%x result32=0x%x dstCell=0x%x%n",
+                                            offset,
+                                            slotBase,
+                                            srcSlot,
+                                            dstSlot,
+                                            rot,
+                                            srcRaw,
+                                            src32,
+                                            result32,
+                                            dstCell);
+                                }
                             }
                             if (ENABLE_LOG_COPY_SOURCES && offset == METASEC_VM_STORE32_OFFSET) {
                                 long dstBase = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X8).longValue();
@@ -294,7 +554,7 @@ public class MainActivity {
                                 long slotBaseValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X24).longValue();
                                 UnidbgPointer insnPtr = UnidbgPointer.pointer(emulator, insnPtrValue);
                                 long dstAddress = dstBase + offValue;
-                                if (dstAddress == LADON_SRC_TRACE_ADDRESS && insnPtr != null) {
+                                if (dstAddress == LADON_VM_STORE_DST_ADDRESS && insnPtr != null) {
                                     int dstSlot = Byte.toUnsignedInt(insnPtr.getByte(0));
                                     int srcSlot = Byte.toUnsignedInt(insnPtr.getByte(1));
                                     short dstOff = insnPtr.getShort(2);
@@ -417,6 +677,36 @@ public class MainActivity {
                     LADON_ARG4_TRACE_SIZE);
             ladonArg4WriteTrace = emulator.traceWrite(begin, end);
         }
+        if (ENABLE_LADON_STAGE0_TRACE) {
+            long begin = LADON_STAGE0_TRACE_ADDRESS - LADON_STAGE0_TRACE_PAD;
+            long end = LADON_STAGE0_TRACE_ADDRESS + LADON_STAGE0_TRACE_SIZE + LADON_STAGE0_TRACE_PAD - 1L;
+            System.out.printf("ladon stage0 trace enabled: [0x%x, 0x%x] focus=[0x%x, 0x%x] size=0x%x%n",
+                    begin, end,
+                    LADON_STAGE0_TRACE_ADDRESS,
+                    LADON_STAGE0_TRACE_ADDRESS + LADON_STAGE0_TRACE_SIZE - 1L,
+                    LADON_STAGE0_TRACE_SIZE);
+            ladonStage0WriteTrace = emulator.traceWrite(begin, end);
+        }
+        if (ENABLE_LADON_STAGE0_SYSTEM_WRITE_TRACE) {
+            long begin = LADON_STAGE0_TRACE_ADDRESS - LADON_STAGE0_TRACE_PAD;
+            long end = LADON_STAGE0_TRACE_ADDRESS + LADON_STAGE0_TRACE_SIZE + LADON_STAGE0_TRACE_PAD;
+            System.out.printf("ladon stage0 system write trace enabled: [0x%x, 0x%x) focus=[0x%x, 0x%x] size=0x%x%n",
+                    begin,
+                    end,
+                    LADON_STAGE0_TRACE_ADDRESS,
+                    LADON_STAGE0_TRACE_ADDRESS + LADON_STAGE0_TRACE_SIZE - 1L,
+                    LADON_STAGE0_TRACE_SIZE);
+            emulator.setTraceSystemMemoryWrite(begin, end, (emu, address, buf) -> {
+                UnidbgPointer pc = emu.getContext().getPCPointer();
+                UnidbgPointer lr = emu.getContext().getLRPointer();
+                String hex = Hex.encodeHexString(buf);
+                String text = new String(buf, StandardCharsets.UTF_8)
+                        .replace("\r", "\\r")
+                        .replace("\n", "\\n");
+                System.out.printf("[ladon stage0 system write] addr=0x%x size=%d pc=%s lr=%s hex=%s text=%s%n",
+                        address, buf.length, pc, lr, hex, text);
+            });
+        }
         if (ENABLE_LADON_SRC_TRACE) {
             long begin = LADON_SRC_TRACE_ADDRESS;
             long end = LADON_SRC_TRACE_ADDRESS + LADON_SRC_TRACE_SIZE - 1L;
@@ -426,6 +716,86 @@ public class MainActivity {
                     end,
                     LADON_SRC_TRACE_SIZE);
             ladonSrcWriteTrace = emulator.traceWrite(begin, end);
+        }
+        if (ENABLE_LADON_SRC_SYSTEM_WRITE_TRACE) {
+            long begin = LADON_SRC_TRACE_ADDRESS;
+            long end = LADON_SRC_TRACE_ADDRESS + LADON_SRC_TRACE_SIZE;
+            System.out.printf("ladon src system write trace enabled: [0x%x, 0x%x) focus=[0x%x, 0x%x] size=0x%x%n",
+                    begin,
+                    end,
+                    LADON_SRC_TRACE_ADDRESS,
+                    LADON_SRC_TRACE_ADDRESS + LADON_SRC_TRACE_SIZE - 1L,
+                    LADON_SRC_TRACE_SIZE);
+            emulator.setTraceSystemMemoryWrite(begin, end, (emu, address, buf) -> {
+                UnidbgPointer pc = emu.getContext().getPCPointer();
+                UnidbgPointer lr = emu.getContext().getLRPointer();
+                String hex = Hex.encodeHexString(buf);
+                String text = new String(buf, StandardCharsets.UTF_8)
+                        .replace("\r", "\\r")
+                        .replace("\n", "\\n");
+                System.out.printf("[ladon src system write] addr=0x%x size=%d pc=%s lr=%s hex=%s text=%s%n",
+                        address, buf.length, pc, lr, hex, text);
+            });
+        }
+        if (ENABLE_LADON_SRC_SOURCE_TRACE) {
+            long begin = LADON_SRC_SOURCE_TRACE_ADDRESS;
+            long end = LADON_SRC_SOURCE_TRACE_ADDRESS + LADON_SRC_SOURCE_TRACE_SIZE - 1L;
+            System.out.printf("ladon src-source trace enabled: [0x%x, 0x%x] focus=[0x%x, 0x%x] size=0x%x%n",
+                    begin, end,
+                    LADON_SRC_SOURCE_TRACE_ADDRESS,
+                    end,
+                    LADON_SRC_SOURCE_TRACE_SIZE);
+            ladonSrcSourceWriteTrace = emulator.traceWrite(begin, end);
+        }
+        if (ENABLE_LADON_SRC_SOURCE_SYSTEM_WRITE_TRACE) {
+            long begin = LADON_SRC_SOURCE_TRACE_ADDRESS;
+            long end = LADON_SRC_SOURCE_TRACE_ADDRESS + LADON_SRC_SOURCE_TRACE_SIZE;
+            System.out.printf("ladon src-source system write trace enabled: [0x%x, 0x%x) focus=[0x%x, 0x%x] size=0x%x%n",
+                    begin,
+                    end,
+                    LADON_SRC_SOURCE_TRACE_ADDRESS,
+                    LADON_SRC_SOURCE_TRACE_ADDRESS + LADON_SRC_SOURCE_TRACE_SIZE - 1L,
+                    LADON_SRC_SOURCE_TRACE_SIZE);
+            emulator.setTraceSystemMemoryWrite(begin, end, (emu, address, buf) -> {
+                UnidbgPointer pc = emu.getContext().getPCPointer();
+                UnidbgPointer lr = emu.getContext().getLRPointer();
+                String hex = Hex.encodeHexString(buf);
+                String text = new String(buf, StandardCharsets.UTF_8)
+                        .replace("\r", "\\r")
+                        .replace("\n", "\\n");
+                System.out.printf("[ladon src-source system write] addr=0x%x size=%d pc=%s lr=%s hex=%s text=%s%n",
+                        address, buf.length, pc, lr, hex, text);
+            });
+        }
+        if (ENABLE_LADON_SLOT9_TRACE) {
+            long begin = LADON_SLOT9_TRACE_ADDRESS;
+            long end = LADON_SLOT9_TRACE_ADDRESS + LADON_SLOT9_TRACE_SIZE - 1L;
+            System.out.printf("ladon slot9 trace enabled: [0x%x, 0x%x] focus=[0x%x, 0x%x] size=0x%x%n",
+                    begin, end,
+                    LADON_SLOT9_TRACE_ADDRESS,
+                    end,
+                    LADON_SLOT9_TRACE_SIZE);
+            ladonSlot9WriteTrace = emulator.traceWrite(begin, end);
+        }
+        if (ENABLE_LADON_SLOT9_SYSTEM_WRITE_TRACE) {
+            long begin = LADON_SLOT9_TRACE_ADDRESS;
+            long end = LADON_SLOT9_TRACE_ADDRESS + LADON_SLOT9_TRACE_SIZE;
+            System.out.printf("ladon slot9 system write trace enabled: [0x%x, 0x%x) focus=[0x%x, 0x%x] size=0x%x%n",
+                    begin,
+                    end,
+                    LADON_SLOT9_TRACE_ADDRESS,
+                    LADON_SLOT9_TRACE_ADDRESS + LADON_SLOT9_TRACE_SIZE - 1L,
+                    LADON_SLOT9_TRACE_SIZE);
+            emulator.setTraceSystemMemoryWrite(begin, end, (emu, address, buf) -> {
+                UnidbgPointer pc = emu.getContext().getPCPointer();
+                UnidbgPointer lr = emu.getContext().getLRPointer();
+                String hex = Hex.encodeHexString(buf);
+                String text = new String(buf, StandardCharsets.UTF_8)
+                        .replace("\r", "\\r")
+                        .replace("\n", "\\n");
+                System.out.printf("[ladon slot9 system write] addr=0x%x size=%d pc=%s lr=%s hex=%s text=%s%n",
+                        address, buf.length, pc, lr, hex, text);
+            });
         }
         if (ENABLE_LADON_SYSTEM_WRITE_TRACE) {
             long begin = LADON_VALUE_TRACE_ADDRESS - LADON_VALUE_TRACE_PAD;
@@ -477,14 +847,26 @@ public class MainActivity {
             String result = pointer == null ? null : pointer.getString(0);
             System.out.println("direct-callback result=\n" + result);
         } finally {
-            if (ladonVmSrcSlotWriteTrace != null) {
-                ladonVmSrcSlotWriteTrace.stopTrace();
-                ladonVmSrcSlotWriteTrace = null;
-                ladonVmSrcSlotTraceAddress = 0;
+            if (ladonStage0WriteTrace != null) {
+                ladonStage0WriteTrace.stopTrace();
+                ladonStage0WriteTrace = null;
             }
             if (ladonSrcWriteTrace != null) {
                 ladonSrcWriteTrace.stopTrace();
                 ladonSrcWriteTrace = null;
+            }
+            if (ladonSrcSourceWriteTrace != null) {
+                ladonSrcSourceWriteTrace.stopTrace();
+                ladonSrcSourceWriteTrace = null;
+            }
+            if (ladonSlot9WriteTrace != null) {
+                ladonSlot9WriteTrace.stopTrace();
+                ladonSlot9WriteTrace = null;
+            }
+            if (ladonGlobalWordWriteTrace != null) {
+                ladonGlobalWordWriteTrace.stopTrace();
+                ladonGlobalWordWriteTrace = null;
+                ladonGlobalWordTraceBase = 0;
             }
             if (ladonArg4WriteTrace != null) {
                 ladonArg4WriteTrace.stopTrace();
@@ -548,24 +930,366 @@ public class MainActivity {
         mapCtxTraceSize = traceSize;
     }
 
-    // 在 VM slots 基址稳定后监控 slot[5]，用于继续回溯 0x66d0943c 的来源。
-    private void ensureLadonVmSrcSlotTrace(UnidbgPointer slotBase) {
-        if (!ENABLE_LADON_VM_SRC_SLOT_TRACE || slotBase == null) {
+    // 按运行时解析出的全局字地址开启 4 字节写监控，用来追 slot[6] 的真正来源。
+    private void ensureLadonGlobalWordWriteTrace(UnidbgPointer globalWordPtr) {
+        if (!ENABLE_LADON_GLOBAL_WORD_TRACE || globalWordPtr == null) {
             return;
         }
-        long base = slotBase.peer + (long) LADON_VM_SOURCE_SLOT_INDEX * LADON_VM_SLOT_CELL_SIZE;
-        if (ladonVmSrcSlotWriteTrace != null && ladonVmSrcSlotTraceAddress == base) {
+        long base = globalWordPtr.peer;
+        if (ladonGlobalWordWriteTrace != null && ladonGlobalWordTraceBase == base) {
             return;
         }
-        if (ladonVmSrcSlotWriteTrace != null) {
-            ladonVmSrcSlotWriteTrace.stopTrace();
-            ladonVmSrcSlotWriteTrace = null;
+        if (ladonGlobalWordWriteTrace != null) {
+            ladonGlobalWordWriteTrace.stopTrace();
+            ladonGlobalWordWriteTrace = null;
         }
-        long end = base + LADON_VM_SLOT_CELL_SIZE - 1L;
-        System.out.printf("ladon vm slot[%d] trace enabled: [0x%x, 0x%x] size=0x%x%n",
-                LADON_VM_SOURCE_SLOT_INDEX, base, end, LADON_VM_SLOT_CELL_SIZE);
-        ladonVmSrcSlotWriteTrace = emulator.traceWrite(base, end);
-        ladonVmSrcSlotTraceAddress = base;
+        long end = base + LADON_GLOBAL_WORD_TRACE_SIZE - 1L;
+        System.out.printf("ladon global-word trace enabled: [0x%x, 0x%x] size=0x%x%n",
+                base, end, LADON_GLOBAL_WORD_TRACE_SIZE);
+        ladonGlobalWordWriteTrace = emulator.traceWrite(base, end);
+        ladonGlobalWordTraceBase = base;
+    }
+
+    // 只记录真正命中 slot[122] 地址范围的 VM 写回，避开普通内存写的栈噪音。
+    private void maybeLogStage0VmSlotWrite(Emulator<?> emulator, long offset, Instruction insn) {
+        if (!ENABLE_LADON_STAGE0_VM_SLOT_LOG) {
+            return;
+        }
+        if (offset < METASEC_VM_SLOT_WRITE_SCAN_BEGIN || offset > METASEC_VM_SLOT_WRITE_SCAN_END) {
+            return;
+        }
+        int insnId = insn.getId();
+        if (insnId != Arm64_const.ARM64_INS_STR &&
+                insnId != Arm64_const.ARM64_INS_STUR &&
+                insnId != Arm64_const.ARM64_INS_STP &&
+                insnId != Arm64_const.ARM64_INS_STNP &&
+                insnId != Arm64_const.ARM64_INS_STRB &&
+                insnId != Arm64_const.ARM64_INS_STURB &&
+                insnId != Arm64_const.ARM64_INS_STRH &&
+                insnId != Arm64_const.ARM64_INS_STURH) {
+            return;
+        }
+        Object rawOpInfo = insn.getOperands();
+        if (!(rawOpInfo instanceof OpInfo)) {
+            return;
+        }
+        Operand[] operands = ((OpInfo) rawOpInfo).getOperands();
+        if (operands == null || operands.length < 2) {
+            return;
+        }
+        Operand memOp = operands[operands.length - 1];
+        if (memOp.getType() != Arm64_const.ARM64_OP_MEM) {
+            return;
+        }
+        List<Integer> srcRegs = new ArrayList<>();
+        for (int i = 0; i < operands.length - 1; i++) {
+            Operand srcOp = operands[i];
+            if (srcOp.getType() != Arm64_const.ARM64_OP_REG) {
+                return;
+            }
+            srcRegs.add(srcOp.getValue().getReg());
+        }
+        if (srcRegs.isEmpty()) {
+            return;
+        }
+        MemType mem = memOp.getValue().getMem();
+        if (mem == null || mem.getBase() == Arm64_const.ARM64_REG_INVALID) {
+            return;
+        }
+        String baseRegName = insn.regName(mem.getBase());
+        if (!"x24".equals(baseRegName)) {
+            return;
+        }
+        long slotBaseValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X24).longValue();
+        int indexReg = mem.getIndex();
+        long indexContribution = 0;
+        String indexDesc = "none";
+        if (indexReg != Arm64_const.ARM64_REG_INVALID) {
+            int unicornIndexReg = insn.mapToUnicornReg(indexReg);
+            long rawIndex = emulator.getBackend().reg_read(unicornIndexReg).longValue();
+            indexContribution = computeArm64MemIndex(insn, memOp, indexReg, rawIndex);
+            indexDesc = describeArm64MemIndex(insn, memOp, indexReg, rawIndex, indexContribution);
+        }
+        long dstAddress = slotBaseValue + mem.getDisp() + indexContribution;
+        int storeWidth = guessArm64StoreWidthBytes(insn, srcRegs);
+        long slotDelta = dstAddress - slotBaseValue;
+        long stage0SlotOffset = (long) LADON_STAGE0_SLOT_INDEX * METASEC_VM_SLOT_STRIDE;
+        if (!rangesOverlap(slotDelta, storeWidth, stage0SlotOffset, METASEC_VM_SLOT_STRIDE)) {
+            return;
+        }
+        String slotText = slotDelta >= 0 && slotDelta % 8L == 0
+                ? Long.toString(slotDelta / 8L)
+                : "unaligned";
+        StringBuilder srcDesc = new StringBuilder();
+        for (int i = 0; i < srcRegs.size(); i++) {
+            int srcReg = srcRegs.get(i);
+            int unicornSrcReg = insn.mapToUnicornReg(srcReg);
+            long srcRaw = emulator.getBackend().reg_read(unicornSrcReg).longValue();
+            if (i != 0) {
+                srcDesc.append(", ");
+            }
+            srcDesc.append(insn.regName(srcReg)).append("=0x").append(Long.toHexString(srcRaw));
+        }
+        System.out.printf("[metasec+0x%x] vm-slot-write-stage0 insn=%s %s slotBase=0x%x dst=0x%x width=%d slot=%s targetSlot=%d src={%s} disp=%d index={%s}%n",
+                offset,
+                insn.getMnemonic(),
+                insn.getOpStr(),
+                slotBaseValue,
+                dstAddress,
+                storeWidth,
+                slotText,
+                LADON_STAGE0_SLOT_INDEX,
+                srcDesc,
+                mem.getDisp(),
+                indexDesc);
+    }
+
+    // 只记录真正命中 slot[9] 地址范围的 VM 写回，帮助追 X-Ladon 上游值的来源。
+    private void maybeLogLadonSlot9VmWrite(Emulator<?> emulator, long offset, Instruction insn) {
+        if (!ENABLE_LOG_COPY_SOURCES) {
+            return;
+        }
+        if (offset < METASEC_VM_SLOT_WRITE_SCAN_BEGIN || offset > METASEC_VM_SLOT_WRITE_SCAN_END) {
+            return;
+        }
+        int insnId = insn.getId();
+        if (insnId != Arm64_const.ARM64_INS_STR &&
+                insnId != Arm64_const.ARM64_INS_STUR &&
+                insnId != Arm64_const.ARM64_INS_STP &&
+                insnId != Arm64_const.ARM64_INS_STNP &&
+                insnId != Arm64_const.ARM64_INS_STRB &&
+                insnId != Arm64_const.ARM64_INS_STURB &&
+                insnId != Arm64_const.ARM64_INS_STRH &&
+                insnId != Arm64_const.ARM64_INS_STURH) {
+            return;
+        }
+        Object rawOpInfo = insn.getOperands();
+        if (!(rawOpInfo instanceof OpInfo)) {
+            return;
+        }
+        Operand[] operands = ((OpInfo) rawOpInfo).getOperands();
+        if (operands == null || operands.length < 2) {
+            return;
+        }
+        Operand memOp = operands[operands.length - 1];
+        if (memOp.getType() != Arm64_const.ARM64_OP_MEM) {
+            return;
+        }
+        List<Integer> srcRegs = new ArrayList<>();
+        for (int i = 0; i < operands.length - 1; i++) {
+            Operand srcOp = operands[i];
+            if (srcOp.getType() != Arm64_const.ARM64_OP_REG) {
+                return;
+            }
+            srcRegs.add(srcOp.getValue().getReg());
+        }
+        if (srcRegs.isEmpty()) {
+            return;
+        }
+        MemType mem = memOp.getValue().getMem();
+        if (mem == null || mem.getBase() == Arm64_const.ARM64_REG_INVALID) {
+            return;
+        }
+        String baseRegName = insn.regName(mem.getBase());
+        if (!"x24".equals(baseRegName)) {
+            return;
+        }
+        long slotBaseValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X24).longValue();
+        int indexReg = mem.getIndex();
+        long indexContribution = 0;
+        String indexDesc = "none";
+        if (indexReg != Arm64_const.ARM64_REG_INVALID) {
+            int unicornIndexReg = insn.mapToUnicornReg(indexReg);
+            long rawIndex = emulator.getBackend().reg_read(unicornIndexReg).longValue();
+            indexContribution = computeArm64MemIndex(insn, memOp, indexReg, rawIndex);
+            indexDesc = describeArm64MemIndex(insn, memOp, indexReg, rawIndex, indexContribution);
+        }
+        long dstAddress = slotBaseValue + mem.getDisp() + indexContribution;
+        int storeWidth = guessArm64StoreWidthBytes(insn, srcRegs);
+        long slotDelta = dstAddress - slotBaseValue;
+        long slot9Offset = (long) LADON_VM_GLOBAL_SOURCE_SLOT * METASEC_VM_SLOT_STRIDE;
+        if (!rangesOverlap(slotDelta, storeWidth, slot9Offset, METASEC_VM_SLOT_STRIDE)) {
+            return;
+        }
+        String slotText = slotDelta >= 0 && slotDelta % 8L == 0
+                ? Long.toString(slotDelta / 8L)
+                : "unaligned";
+        StringBuilder srcDesc = new StringBuilder();
+        for (int i = 0; i < srcRegs.size(); i++) {
+            int srcReg = srcRegs.get(i);
+            int unicornSrcReg = insn.mapToUnicornReg(srcReg);
+            long srcRaw = emulator.getBackend().reg_read(unicornSrcReg).longValue();
+            if (i != 0) {
+                srcDesc.append(", ");
+            }
+            srcDesc.append(insn.regName(srcReg)).append("=0x").append(Long.toHexString(srcRaw));
+        }
+        System.out.printf("[metasec+0x%x] vm-slot-write-ladon9 insn=%s %s slotBase=0x%x dst=0x%x width=%d slot=%s targetSlot=%d src={%s} disp=%d index={%s}%n",
+                offset,
+                insn.getMnemonic(),
+                insn.getOpStr(),
+                slotBaseValue,
+                dstAddress,
+                storeWidth,
+                slotText,
+                LADON_VM_GLOBAL_SOURCE_SLOT,
+                srcDesc,
+                mem.getDisp(),
+                indexDesc);
+    }
+
+    // 对 copy 型 slot 写回补充 src/dst slot 号和值，只在目标是 slot[9] 时打印。
+    private void logLadonSlotCopyPreload(Emulator<?> emulator, long offset, String tag, int srcSlot, int dstSlot) {
+        if (dstSlot != LADON_VM_GLOBAL_SOURCE_SLOT) {
+            return;
+        }
+        long slotBaseValue = emulator.getBackend().reg_read(Arm64Const.UC_ARM64_REG_X24).longValue();
+        UnidbgPointer slotBase = UnidbgPointer.pointer(emulator, slotBaseValue);
+        long srcCell = slotBaseValue + (long) srcSlot * METASEC_VM_SLOT_STRIDE;
+        long dstCell = slotBaseValue + (long) dstSlot * METASEC_VM_SLOT_STRIDE;
+        long srcValue = slotBase == null ? 0L : slotBase.getLong((long) srcSlot * METASEC_VM_SLOT_STRIDE);
+        long dstBefore = slotBase == null ? 0L : slotBase.getLong((long) dstSlot * METASEC_VM_SLOT_STRIDE);
+        System.out.printf("[metasec+0x%x] %s slotBase=%s srcSlot=%d srcCell=0x%x srcValue=0x%x dstSlot=%d dstCell=0x%x dstBefore=0x%x%n",
+                offset,
+                tag,
+                slotBase,
+                srcSlot,
+                srcCell,
+                srcValue,
+                dstSlot,
+                dstCell,
+                dstBefore);
+    }
+
+    // 计算 ARM64 内存寻址里的 index 部分，供 slot 写回定位使用。
+    private long computeArm64MemIndex(Instruction insn, Operand memOp, int indexReg, long rawIndex) {
+        String regName = insn.regName(indexReg);
+        long value = rawIndex;
+        if (regName != null && regName.startsWith("w")) {
+            value &= 0xffffffffL;
+        }
+        switch (memOp.getExt()) {
+            case Arm64_const.ARM64_EXT_UXTW:
+                value &= 0xffffffffL;
+                break;
+            case Arm64_const.ARM64_EXT_SXTW:
+                value = (long) (int) value;
+                break;
+            case Arm64_const.ARM64_EXT_UXTX:
+            case Arm64_const.ARM64_EXT_SXTX:
+            case Arm64_const.ARM64_EXT_INVALID:
+            default:
+                break;
+        }
+        OpShift shift = memOp.getShift();
+        if (shift != null && shift.getValue() != 0) {
+            value <<= shift.getValue();
+        }
+        return value;
+    }
+
+    // 输出 index 寄存器、扩展方式和缩放信息，方便确认 slot 号是怎么来的。
+    private String describeArm64MemIndex(Instruction insn, Operand memOp, int indexReg, long rawIndex, long indexContribution) {
+        OpShift shift = memOp.getShift();
+        int shiftValue = shift == null ? 0 : shift.getValue();
+        int shiftType = shift == null ? Arm64_const.ARM64_SFT_INVALID : shift.getType();
+        return String.format("reg=%s raw=0x%x ext=%s shift=%s:%d scaled=0x%x",
+                insn.regName(indexReg),
+                rawIndex,
+                describeArm64Ext(memOp.getExt()),
+                describeArm64Shift(shiftType),
+                shiftValue,
+                indexContribution);
+    }
+
+    // 估算 store 指令写入的字节数，用来判断是否和 slot[122] 地址范围重叠。
+    private int guessArm64StoreWidthBytes(Instruction insn, List<Integer> srcRegs) {
+        switch (insn.getId()) {
+            case Arm64_const.ARM64_INS_STRB:
+            case Arm64_const.ARM64_INS_STURB:
+                return 1;
+            case Arm64_const.ARM64_INS_STRH:
+            case Arm64_const.ARM64_INS_STURH:
+                return 2;
+            default:
+                int width = 0;
+                for (int srcReg : srcRegs) {
+                    width += guessArm64RegisterWidthBytes(insn.regName(srcReg));
+                }
+                return width > 0 ? width : 8;
+        }
+    }
+
+    // 按寄存器名估算存储宽度，兼容 q/d/s/w/x 以及 stp 这类双寄存器写。
+    private int guessArm64RegisterWidthBytes(String regName) {
+        if (regName == null || regName.isEmpty()) {
+            return 8;
+        }
+        char prefix = regName.charAt(0);
+        switch (prefix) {
+            case 'b':
+                return 1;
+            case 'h':
+                return 2;
+            case 's':
+            case 'w':
+                return 4;
+            case 'd':
+            case 'x':
+                return 8;
+            case 'q':
+                return 16;
+            default:
+                return 8;
+        }
+    }
+
+    // 判断两段地址范围是否相交。
+    private boolean rangesOverlap(long beginA, int sizeA, long beginB, int sizeB) {
+        if (sizeA <= 0 || sizeB <= 0) {
+            return false;
+        }
+        long endA = beginA + sizeA - 1L;
+        long endB = beginB + sizeB - 1L;
+        return beginA <= endB && beginB <= endA;
+    }
+
+    // 将 ARM64 extend 类型格式化为短文本。
+    private String describeArm64Ext(int ext) {
+        switch (ext) {
+            case Arm64_const.ARM64_EXT_UXTW:
+                return "uxtw";
+            case Arm64_const.ARM64_EXT_SXTW:
+                return "sxtw";
+            case Arm64_const.ARM64_EXT_UXTX:
+                return "uxtx";
+            case Arm64_const.ARM64_EXT_SXTX:
+                return "sxtx";
+            case Arm64_const.ARM64_EXT_INVALID:
+                return "none";
+            default:
+                return "ext#" + ext;
+        }
+    }
+
+    // 将 ARM64 shift 类型格式化为短文本。
+    private String describeArm64Shift(int shiftType) {
+        switch (shiftType) {
+            case Arm64_const.ARM64_SFT_LSL:
+                return "lsl";
+            case Arm64_const.ARM64_SFT_LSR:
+                return "lsr";
+            case Arm64_const.ARM64_SFT_ASR:
+                return "asr";
+            case Arm64_const.ARM64_SFT_ROR:
+                return "ror";
+            case Arm64_const.ARM64_SFT_MSL:
+                return "msl";
+            case Arm64_const.ARM64_SFT_INVALID:
+                return "none";
+            default:
+                return "shift#" + shiftType;
+        }
     }
 
     // 在目标偏移安装临时断点并打印 PC/LR/调用栈。
@@ -642,6 +1366,18 @@ public class MainActivity {
             return ptr.getLong(offset);
         } catch (Throwable t) {
             return Long.MIN_VALUE;
+        }
+    }
+
+    // 安全读取 32 位值，失败时返回 Integer.MIN_VALUE。
+    private int safeReadInt(UnidbgPointer ptr, long offset) {
+        if (ptr == null) {
+            return Integer.MIN_VALUE;
+        }
+        try {
+            return ptr.getInt(offset);
+        } catch (Throwable t) {
+            return Integer.MIN_VALUE;
         }
     }
 
