@@ -1,0 +1,766 @@
+[X-Ladon] waiting for libmetasec_ml.so
+[X-Ladon] attached sub_2590ec at 0x7b830ae0ec (metasec+0x2590ec)
+[X-Ladon] attached sub_269b70 at 0x7b830beb70 (metasec+0x269b70)
+[X-Ladon] attached sub_291e3c at 0x7b830e6e3c (metasec+0x291e3c)
+[X-Ladon] attached sub_29fb98 at 0x7b830f4b98 (metasec+0x29fb98)
+[X-Ladon] attached sub_2b7724 at 0x7b8310c724 (metasec+0x2b7724)
+[X-Ladon] hooks installed on libmetasec_ml.so base=0x7b82e55000
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca228d9f0
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca228d9f0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca228e5f0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca228e790 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31373739393530383631 text=1779950861 utf8="1779950861"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca228f3f0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca2287210 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=4465555861673d3d text=DeUXag== utf8="DeUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca228d9f0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xd0fcc7f0
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xd0fcc7f0
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xb0943119 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xb0943119
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xb0943119
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca2288650 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca2288d10 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=734a517847513d3d text=sJQxGQ== utf8="sJQxGQ=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca2293dd0
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca2293dd0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca2292730 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca2294870 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31373739393530383631 text=1779950861 utf8="1779950861"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22951d0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22988d0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=4465555861673d3d text=DeUXag== utf8="DeUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca2293dd0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x795f94a9
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x795f94a9
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x1902b440 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x1902b440
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x1902b440
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca2298870 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca2299ef0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=47514b3051413d3d text=GQK0QA== utf8="GQK0QA=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca229b330
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca229b330 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca229b770 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca229b990 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31373739393530383632 text=1779950862 utf8="1779950862"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca229b230 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca229b150 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=4475555861673d3d text=DuUXag== utf8="DuUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca229b330 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xd417e1ee
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xd417e1ee
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xb4237837 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xb4237837
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xb4237837
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca229b8f0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca229bfb0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=74434e344e773d3d text=tCN4Nw== utf8="tCN4Nw=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca22605f0
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca22605f0 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca227d650 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca227e070 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31373739393530383632 text=1779950862 utf8="1779950862"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca227df50 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca227c070 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=4475555861673d3d text=DuUXag== utf8="DuUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca22605f0 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x63710c8b
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x63710c8b
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x4fc0752 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x4fc0752
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x4fc0752
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca227f870 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca227b830 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=4250774855673d3d text=BPwHUg== utf8="BPwHUg=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca22608d0
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca22608d0 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca2260710 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca22807f0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31373739393530383632 text=1779950862 utf8="1779950862"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca225a1d0 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22605f0 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=4475555861673d3d text=DuUXag== utf8="DuUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca22608d0 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x2d5571f4
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x2d5571f4
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x4adb582d call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x4adb582d
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x4adb582d
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca2260410 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca227a090 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=537474594c513d3d text=SttYLQ== utf8="SttYLQ=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca224de10
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca224de10 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca229b230 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca229a490 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31373739393530383632 text=1779950862 utf8="1779950862"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca227e350 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca229a670 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=4475555861673d3d text=DuUXag== utf8="DuUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca224de10 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x4d59a228
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x4d59a228
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x2d2f3ef1 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x2d2f3ef1
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x2d2f3ef1
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca229b210 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca229a2d0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=4c53382b38513d3d text=LS8+8Q== utf8="LS8+8Q=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca2260790
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca2260790 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca2260490 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca228f9b0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31373739393530383633 text=1779950863 utf8="1779950863"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca229a990 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca228fab0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=442b555861673d3d text=D+UXag== utf8="D+UXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca2260790 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xb3083be0
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xb3083be0
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xd41c7229 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xd41c7229
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xd41c7229
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca229ab70 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca229ab30 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=314278794b513d3d text=1BxyKQ== utf8="1BxyKQ=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae522c0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca229ae50
+  dst(after) => obj=0x7beae522c0 len=10 data=0x7ca229ae50 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae52708
+  key   => ref=0x7beae4c088 alloc=10 len=9 data=0x7ca229a930 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4c0c8 alloc=16 len=10 data=0x7ca2260810 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31373739393530383633 text=1779950863 utf8="1779950863"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae52708
+  key   => ref=0x7beae4c088 alloc=8 len=7 data=0x7ca2278e70 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4c0c8 alloc=16 len=8 data=0x7ca225a190 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=442b555861673d3d text=D+UXag== utf8="D+UXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae522c0 call=sub_269b70
+  slot8Obj => obj=0x7beae522c0 len=10 data=0x7ca229ae50 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae46100 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xdcf3d07a
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae46100 ret32=0xdcf3d07a
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xbc86beb3 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae46100 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xbc86beb3
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae46100 ret32=0xbc86beb3
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae52708
+  key   => ref=0x7beae4c088 alloc=8 len=7 data=0x7ca22607d0 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4c0c8 alloc=16 len=8 data=0x7ca2294ab0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=7649612b73773d3d text=vIa+sw== utf8="vIa+sw=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca229b5d0
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca229b5d0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca2260b50 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca229a3b0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31373739393530383633 text=1779950863 utf8="1779950863"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca229ad30 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca229ac30 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=442b555861673d3d text=D+UXag== utf8="D+UXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca229b5d0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xdcf3d07a
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xdcf3d07a
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xbcb0f7b3 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xbcb0f7b3
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xbcb0f7b3
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca229a790 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca2281270 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=764c443373773d3d text=vLD3sw== utf8="vLD3sw=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca229d790
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca229d790 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca229d9b0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca229d770 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31373739393530383634 text=1779950864 utf8="1779950864"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca229cff0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca229d7b0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=454f555861673d3d text=EOUXag== utf8="EOUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca229d790 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xa2beaa0
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xa2beaa0
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x6df72899 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x6df72899
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x6df72899
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca229d290 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca229d9d0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=6266636f6d513d3d text=bfcomQ== utf8="bfcomQ=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca22a0f90
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca22a0f90 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca22746f0 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca2298b50 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31373739393530383634 text=1779950864 utf8="1779950864"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22a09b0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22a0f50 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=454f555861673d3d text=EOUXag== utf8="EOUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca22a0f90 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x5f6234c9
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x5f6234c9
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x384ddff0 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x384ddff0
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x384ddff0
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca228f8b0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22a0bf0 range=0x7ca227a000-0x7ca22ba000 prot=rw- hex=4f45336638413d3d text=OE3f8A== utf8="OE3f8A=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca22e0d70
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca22e0d70 range=0x7ca227a000-0x7ca22fa000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca22d1990 range=0x7ca227a000-0x7ca22fa000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca22d2a30 range=0x7ca227a000-0x7ca22fa000 prot=rw- hex=31373739393530383635 text=1779950865 utf8="1779950865"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22e5990 range=0x7ca227a000-0x7ca22fa000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22e5970 range=0x7ca227a000-0x7ca22fa000 prot=rw- hex=4565555861673d3d text=EeUXag== utf8="EeUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca22e0d70 range=0x7ca227a000-0x7ca22fa000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x2cb6c057
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x2cb6c057
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x4dce9c7e call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x4dce9c7e
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x4dce9c7e
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22d15f0 range=0x7ca227a000-0x7ca22fa000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22d2d90 range=0x7ca227a000-0x7ca22fa000 prot=rw- hex=5463366366673d3d text=Tc6cfg== utf8="Tc6cfg=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca22ed270
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca22ed270 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca22f2690 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca22f59d0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383635 text=1779950865 utf8="1779950865"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22f56b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22dedf0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=4565555861673d3d text=EeUXag== utf8="EeUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca22ed270 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x8832d7e6
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x8832d7e6
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xe84450cf call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xe84450cf
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xe84450cf
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22b2b30 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22b2a10 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=364552517a773d3d text=6ERQzw== utf8="6ERQzw=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca22d4910
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca22d4910 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca22f58b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca22ecb90 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383636 text=1779950866 utf8="1779950866"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22f55d0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22f5670 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=4575555861673d3d text=EuUXag== utf8="EuUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca22d4910 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x5b4d1dab
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x5b4d1dab
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x3ba912b2 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x3ba912b2
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x3ba912b2
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22f5170 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22f5710 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=4f366b5373673d3d text=O6kSsg== utf8="O6kSsg=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca22f6cd0
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca22f6cd0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca22f63b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca22f9c30 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383636 text=1779950866 utf8="1779950866"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22f6750 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22f6910 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=4575555861673d3d text=EuUXag== utf8="EuUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca22f6cd0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x76c92165
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x76c92165
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x1146407c call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x1146407c
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x1146407c
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22f62d0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22f9c10 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=45555a4166413d3d text=EUZAfA== utf8="EUZAfA=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca22f7e90
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca22f7e90 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca22fad50 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca22f8230 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383636 text=1779950866 utf8="1779950866"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22fb270 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22f8130 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=4575555861673d3d text=EuUXag== utf8="EuUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca22f7e90 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x2c248b1c
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x2c248b1c
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x4d084c05 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x4d084c05
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x4d084c05
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22f7290 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22f7050 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=5451684d42513d3d text=TQhMBQ== utf8="TQhMBQ=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca22f61f0
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca22f61f0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca22f64b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca22f5f30 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383637 text=1779950867 utf8="1779950867"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22f7990 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22fef10 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=452b555861673d3d text=E+UXag== utf8="E+UXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca22f61f0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xc526fbd6
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xc526fbd6
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xa4384bdf call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xa4384bdf
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xa4384bdf
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22e7b10 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22f4990 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=7044684c33773d3d text=pDhL3w== utf8="pDhL3w=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca22f5fb0
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca22f5fb0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca22fb810 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca22fa550 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383638 text=1779950868 utf8="1779950868"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22f67b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22f55d0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=464f555861673d3d text=FOUXag== utf8="FOUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca22f5fb0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x8bc3b3a9
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x8bc3b3a9
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xea39a6d0 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xea39a6d0
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xea39a6d0
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22e7590 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22fe470 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=366a6d6d30413d3d text=6jmm0A== utf8="6jmm0A=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca22fe910
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca22fe910 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca22fe8f0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca22fea30 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383638 text=1779950868 utf8="1779950868"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22fecb0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22fe830 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=464f555861673d3d text=FOUXag== utf8="FOUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca22fe910 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xd417e1ee
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xd417e1ee
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xb5f25397 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xb5f25397
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xb5f25397
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22fea90 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22fea10 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=74664a546c773d3d text=tfJTlw== utf8="tfJTlw=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca23002f0
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca23002f0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca23002b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca2300490 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383638 text=1779950868 utf8="1779950868"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca2300590 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca23006b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=464f555861673d3d text=FOUXag== utf8="FOUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca23002f0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xcee22063
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xcee22063
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xaff9a71a call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xaff9a71a
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xaff9a71a
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca23005f0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca2300710 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=722f6d6e47673d3d text=r/mnGg== utf8="r/mnGg=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca23024b0
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca23024b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca23023d0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca23025f0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383639 text=1779950869 utf8="1779950869"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca2304f70 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca2304e30 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=4665555861673d3d text=FeUXag== utf8="FeUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca23024b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xb1432a66
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xb1432a66
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xd0a9ed0f call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xd0a9ed0f
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xd0a9ed0f
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22778b0 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca23006f0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=304b6e7444773d3d text=0KntDw== utf8="0KntDw=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca2290710
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca2290710 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca2286030 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca22a0f70 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383639 text=1779950869 utf8="1779950869"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22f80d0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22fa1f0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=4665555861673d3d text=FeUXag== utf8="FeUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca2290710 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xf0af4c8e
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xf0af4c8e
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x90ea6fe7 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x90ea6fe7
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x90ea6fe7
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca2288e50 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22f2750 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=6b4f707635773d3d text=kOpv5w== utf8="kOpv5w=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca2252450
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca2252450 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca22486d0 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca230fb50 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383730 text=1779950870 utf8="1779950870"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca230f990 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca230fed0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=4675555861673d3d text=FuUXag== utf8="FuUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca2252450 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xd417e1ee
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xd417e1ee
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xb5a506b7 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xb5a506b7
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xb5a506b7
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca230fab0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca2315450 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=7461554774773d3d text=taUGtw== utf8="taUGtw=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca23186b0
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca23186b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca2318150 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca2318370 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383731 text=1779950871 utf8="1779950871"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca2318350 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca2318cd0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=462b555861673d3d text=F+UXag== utf8="F+UXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca23186b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xbc1cf923
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xbc1cf923
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xdd94c26a call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xdd94c26a
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xdd94c26a
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca2318390 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca23188b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=335a544361673d3d text=3ZTCag== utf8="3ZTCag=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca2300590
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca2300590 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca2318730 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca2319110 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383731 text=1779950871 utf8="1779950871"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca2318950 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22fe090 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=462b555861673d3d text=F+UXag== utf8="F+UXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca2300590 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xfe01cd17
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xfe01cd17
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x9c72025e call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x9c72025e
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x9c72025e
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca22f1030 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca23192b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=6e48494358673d3d text=nHICXg== utf8="nHICXg=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca231b910
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca231b910 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca23024f0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca231b790 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383732 text=1779950872 utf8="1779950872"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca231baf0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca231b610 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=474f555861673d3d text=GOUXag== utf8="GOUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca231b910 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xdcafb4b1
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xdcafb4b1
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xbedd9108 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xbedd9108
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xbedd9108
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca231b770 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca231b690 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=7674325243413d3d text=vt2RCA== utf8="vt2RCA=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca22f7e90
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca22f7e90 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca22f9310 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca22fb450 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383733 text=1779950873 utf8="1779950873"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca231b2d0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22fa5b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=4765555861673d3d text=GeUXag== utf8="GeUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca22f7e90 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x6203e139
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x6203e139
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x514e390 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x514e390
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x514e390
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca2319430 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca22fa0b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=4252546a6b413d3d text=BRTjkA== utf8="BRTjkA=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae522c0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca2284b50
+  dst(after) => obj=0x7beae522c0 len=10 data=0x7ca2284b50 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae52708
+  key   => ref=0x7beae4c088 alloc=10 len=9 data=0x7ca23043f0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4c0c8 alloc=16 len=10 data=0x7ca231bd90 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383733 text=1779950873 utf8="1779950873"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae52708
+  key   => ref=0x7beae4c088 alloc=8 len=7 data=0x7ca231b9f0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4c0c8 alloc=16 len=8 data=0x7ca22f8a90 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=4765555861673d3d text=GeUXag== utf8="GeUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae522c0 call=sub_269b70
+  slot8Obj => obj=0x7beae522c0 len=10 data=0x7ca2284b50 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae46100 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x247c9d03
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae46100 ret32=0x247c9d03
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x455049aa call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae46100 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x455049aa
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae46100 ret32=0x455049aa
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae52708
+  key   => ref=0x7beae4c088 alloc=8 len=7 data=0x7ca2304910 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4c0c8 alloc=16 len=8 data=0x7ca22f8490 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=5256424a71673d3d text=RVBJqg== utf8="RVBJqg=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae522c0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca2284f90
+  dst(after) => obj=0x7beae522c0 len=10 data=0x7ca2284f90 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae52708
+  key   => ref=0x7beae4c088 alloc=10 len=9 data=0x7ca2309230 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4c0c8 alloc=16 len=10 data=0x7ca22fe6d0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383734 text=1779950874 utf8="1779950874"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae52708
+  key   => ref=0x7beae4c088 alloc=8 len=7 data=0x7ca22fc010 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4c0c8 alloc=16 len=8 data=0x7ca225cad0 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=4775555861673d3d text=GuUXag== utf8="GuUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae522c0 call=sub_269b70
+  slot8Obj => obj=0x7beae522c0 len=10 data=0x7ca2284f90 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae46100 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x92da0cb5
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae46100 ret32=0x92da0cb5
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xf0a4ef2c call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae46100 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xf0a4ef2c
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae46100 ret32=0xf0a4ef2c
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae52708
+  key   => ref=0x7beae4c088 alloc=8 len=7 data=0x7ca22f7350 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4c0c8 alloc=16 len=8 data=0x7ca22fbcd0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=384b54764c413d3d text=8KTvLA== utf8="8KTvLA=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca231b710
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca231b710 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca2282ad0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca2317c70 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383735 text=1779950875 utf8="1779950875"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca2285530 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca2315e50 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=472b555861673d3d text=G+UXag== utf8="G+UXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca231b710 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xb44cf135
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xb44cf135
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xd2a493bc call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xd2a493bc
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xd2a493bc
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca231efd0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca231e330 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=3071535476413d3d text=0qSTvA== utf8="0qSTvA=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca232c610
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca232c610 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca2330810 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca2330670 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31373739393530383735 text=1779950875 utf8="1779950875"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca2332130 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca23325b0 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=472b555861673d3d text=G+UXag== utf8="G+UXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca232c610 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xb356640a
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xb356640a
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xd1007983 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xd1007983
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xd1007983
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca2331950 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca2333310 range=0x7ca227a000-0x7ca233a000 prot=rw- hex=3051423567773d3d text=0QB5gw== utf8="0QB5gw=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca2340a10
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca2340a10 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca233fd10 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca23407b0 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=31373739393530383736 text=1779950876 utf8="1779950876"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca233b010 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca2340a50 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=484f555861673d3d text=HOUXag== utf8="HOUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca2340a10 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xd417e1ee
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xd417e1ee
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0xb6079b17 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0xb6079b17
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0xb6079b17
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca23401f0 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca23406f0 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=7467656246773d3d text=tgebFw== utf8="tgebFw=="
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-pre dstObj=0x7beae515f0 srcObj=0x7cb22a56c0
+  src(before) => obj=0x7cb22a56c0 len=10 data=0x7ca2252b30 range=0x7ca223a000-0x7ca227a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7f6c] ladon-slot8-copy-post retval=0x7ca2340af0
+  dst(after) => obj=0x7beae515f0 len=10 data=0x7ca2340af0 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=10 len=9 data=0x7ca2340430 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=582d4b68726f6e6f73 text=X-Khronos utf8="X-Khronos"
+  value => ref=0x7beae4b3f8 alloc=16 len=10 data=0x7ca2342250 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=31373739393530383737 text=1779950877 utf8="1779950877"
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca2342830 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=582d4172677573 text=X-Argus utf8="X-Argus"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca2342590 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=4865555861673d3d text=HeUXag== utf8="HeUXag=="
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-precall slot8Value=0x7beae515f0 call=sub_269b70
+  slot8Obj => obj=0x7beae515f0 len=10 data=0x7ca2340af0 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=31353838303933323238 text=1588093228 utf8="1588093228"
+[tid=22410] [metasec+0x2be3f0] ladon-slot6-hash-ret ret64=0x934507fb6e509873
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x2e84a260
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x2e84a260
+[tid=22410] [metasec+0x2be438] ladon-global-set-precall slot8Value=0x7ca2250230 slot9Low32=0x4c99a789 call=sub_291e3c
+[tid=22410] [metasec+0x2be458] ladon-slot6-precall ctx=0x7beae45430 slot8Value=0x7ca2250230 call=sub_29fb98
+[tid=22410] [metasec+0x29fb98] ladon-global-word-load raw32=0x4c99a789
+[tid=22410] [metasec+0x2be458] ladon-slot6-postcall ctx=0x7beae45430 ret32=0x4c99a789
+[tid=22410] [metasec+0x2b7724] map-insert mapCtx=0x7beae51a38
+  key   => ref=0x7beae4b3b8 alloc=8 len=7 data=0x7ca23425d0 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=582d4c61646f6e text=X-Ladon utf8="X-Ladon"
+  value => ref=0x7beae4b3f8 alloc=16 len=8 data=0x7ca2342370 range=0x7ca227a000-0x7ca237a000 prot=rw- hex=544a6d6e69513d3d text=TJmniQ== utf8="TJmniQ=="
